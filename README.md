@@ -22,7 +22,7 @@ Os dados para testes e avaliação dos programas implementados estão disponíve
 
 ## Descrição do trabalho
 
-![alt text](https://raw.githubusercontent.com/NathSantos/tp2_BD/main/printDescricao.png?token=GHSAT0AAAAAAB3G5YD626YM3GZVC26MRVPUZB562YA)
+![printDescricao.png](https://raw.githubusercontent.com/NathSantos/tp2_BD/main/printDescricao.png?token=GHSAT0AAAAAAB3G5YD626YM3GZVC26MRVPUZB562YA)
 
 ## O que entregar 
 
