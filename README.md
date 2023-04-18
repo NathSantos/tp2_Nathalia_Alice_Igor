@@ -1,5 +1,9 @@
 # tp2_BD
 
+- Link do enunciado do trabalho no drive >> https://docs.google.com/document/d/1ZmqKR5zsPUptUT7f20VU5HQB1Wvbm0VI/edit
+- Link de como configurar o VScode para trabalho por pares >> https://ibrahimbutt.medium.com/how-to-set-up-vscode-for-remote-pair-programming-e5f5c30a48e2
+- Link para a nossa Documentação no drive >> https://docs.google.com/document/d/1r-rjzApdRHsjGB1FscKPY337EZh750_bJQAWtc2yvwk/edit
+
 ## Apresentação 
 
 Este trabalho consiste na implementação de programas para armazenamento e consulta em  dados armazenados em memória secundária utilizando as estruturas de arquivo de dados e índice estudadas nas aulas. Os programas devem fornecer suporte para a inserção, assim como diferentes formas de busca, seguindo as técnicas apresentadas nas aulas de organização e indexação de arquivos.
