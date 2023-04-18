@@ -30,12 +30,13 @@ Os arquivos-fonte dos programas, com comentários adequados para permitir a corr
 
 Os programas prontos para serem testados. Os nomes dos programas devem seguir as instruções indicadas no item 2 deste trabalho.
 
- A documentação do projeto dos programas deve ser disponibilizada em um único arquivo PDF nomeado TP2_documentação.pdf, registrando as todas as decisões de projeto tomadas, incluindo:
-A estrutura de cada arquivo de dados e índices;
-Quais fontes formam cada programa;
-As funções que cada fonte contém;
-Quem desenvolveu cada fonte/função;
-Qual o papel de cada função;
+ A documentação do projeto dos programas deve ser disponibilizada em um único arquivo PDF nomeado **TP2_documentação.pdf**, registrando as todas as decisões de projeto tomadas, incluindo:
+
+ - A estrutura de cada arquivo de dados e índices;
+ - Quais fontes formam cada programa;
+ - As funções que cada fonte contém;
+ - Quem desenvolveu cada fonte/função;
+ - Qual o papel de cada função;
             
 ## Como entregar (provavelmente vai mudar)
 
