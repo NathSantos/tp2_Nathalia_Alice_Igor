@@ -1,8 +1,16 @@
 # tp2_BD
 
-- Link do enunciado do trabalho no drive >> https://docs.google.com/document/d/1ZmqKR5zsPUptUT7f20VU5HQB1Wvbm0VI/edit
-- Link de como configurar o VScode para trabalho por pares >> https://ibrahimbutt.medium.com/how-to-set-up-vscode-for-remote-pair-programming-e5f5c30a48e2
-- Link para a nossa Documentação no drive >> https://docs.google.com/document/d/1r-rjzApdRHsjGB1FscKPY337EZh750_bJQAWtc2yvwk/edit
+- Link do enunciado do trabalho no drive >> 
+
+https://docs.google.com/document/d/1ZmqKR5zsPUptUT7f20VU5HQB1Wvbm0VI/edit
+
+- Link de como configurar o VScode para trabalho por pares >> 
+
+https://ibrahimbutt.medium.com/how-to-set-up-vscode-for-remote-pair-programming-e5f5c30a48e2
+
+- Link para a nossa Documentação no drive >> 
+
+https://docs.google.com/document/d/1r-rjzApdRHsjGB1FscKPY337EZh750_bJQAWtc2yvwk/edit
 
 ## Apresentação 
 
