@@ -10,47 +10,7 @@ Os dados para testes e avaliação dos programas implementados estão disponíve
 
 ## Descrição do trabalho
 
-O arquivo de dados deverá armazenar registros de dados sobre artigos científicos publicados em conferências.  A estrutura deste arquivo será a seguinte:
-
-Campo
-Tipo
-Descrição
-ID
-inteiro  
-Código identificador do artigo 
-Título
-alfa 300
-Título de artigo
-Ano
-inteiro
-Ano de publicação do artigo
-Autores
-alfa 150
-Lista dos autores do artigo
-Citações
-inteiro
-Número de vezes que o artigo foi citado
-Atualização
-data e hora
-Data e hora da última atualização dos dados
-Snippet
-alfa entre 100 e 1024 
-Resumo textual do artigo
-
-
-   Os seguintes programas devem ser implementados:
-
-upload <file>: Programa que fará a carga inicial dos dados de entrada que irá criar um banco de dados composto pelos seguintes arquivos:
-
-Arquivo de dados organizado por hashing 
-Arquivo de índice primário usando uma B+Tree armazenada em memória secundária
-Arquivo de índice secundário usando uma outra B+Tree em memória secundária
-
-findrec <ID>: Programa que busca diretamente no arquivo de dados por um registro com o ID informado e, se existir, retorna os campos do registro, a quantidade de blocos lidos para encontrá-lo e a quantidade total de blocos do arquivo de dados;
-
-seek1 <ID>: Programa que devolve o registro com ID igual ao informado, se existir, pesquisando através do arquivo de índice primário, mostrando todos os campos, a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice primário;
-
-seek2 <Titulo>: Programa que mostra os dados do registro que possua o Título igual ao informado, se existir, pesquisando através do arquivo de índice secundário, informando a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice secundário
+![alt text](https://raw.githubusercontent.com/NathSantos/tp2_BD/main/printDescricao.png?token=GHSAT0AAAAAAB3G5YD7PLNMDKURKXOK67NSZB56HTQ)
 
 ## O que entregar 
 
