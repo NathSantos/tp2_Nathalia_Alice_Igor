@@ -6,28 +6,30 @@
 //      $ g++ extraction.cpp -o extraction
 //      $ ./extraction
 
-int main() {
-    std::ifstream input("teste_50.csv"); // abre o arquivo .csv
-    std::ofstream output("output.txt"); // cria o arquivo txt de saída
-    
-    std::string line;
+using namespace std;
 
-    while (std::getline(input, line)) {
+int main() {
+    ifstream input("teste_50.csv"); // abre o arquivo .csv
+    ofstream output("output.txt"); // cria o arquivo txt de saída
+    
+    string line;
+
+    while (getline(input, line)) {
         int id, ano, citacoes;
         char titulo[301], autores[151], atualizacao[20], snippet[1025];
 
         // separa os campos da linha usando o ponto e vírgula como delimitador
-        std::sscanf(line.c_str(), "\"%d\";\"%300[^\"]\";\"%d\";\"%150[^\"]\";\"%d\";\"%19[^\"]\";\"%1024[^\"]\"",
+        sscanf(line.c_str(), "\"%d\";\"%300[^\"]\";\"%d\";\"%150[^\"]\";\"%d\";\"%19[^\"]\";\"%1024[^\"]\"",
                     &id, titulo, &ano, autores, &citacoes, atualizacao, snippet);
 
         // salva os dados separados no arquivo de texto
-        output << "ID: " << id << std::endl;
-        output << "Título: " << titulo << std::endl;
-        output << "Ano: " << ano << std::endl;
-        output << "Autores: " << autores << std::endl;
-        output << "Citações: " << citacoes << std::endl;
-        output << "Atualização: " << atualizacao << std::endl;
-        output << "Snippet: " << snippet << std::endl << std::endl;
+        output << "ID: " << id << endl;
+        output << "Título: " << titulo << endl;
+        output << "Ano: " << ano << endl;
+        output << "Autores: " << autores << endl;
+        output << "Citações: " << citacoes << endl;
+        output << "Atualização: " << atualizacao << endl;
+        output << "Snippet: " << snippet << endl << endl;
     }
 
     input.close(); // fecha o arquivo .csv
