@@ -4,6 +4,10 @@
 #include <ctime>
 #include <cstdlib>
 
+// PARA COMPILAR E EXECUTAR O CÓDIGO:
+//      $ g++ upload.cpp -o upload
+//      $ ./upload arquivo_de_entrada.csv
+
 using namespace std;
 
 // TAMANHO DA TABELA HASH (ALTERE AQUI CASO DESEJAR)
