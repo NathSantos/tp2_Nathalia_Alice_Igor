@@ -11,7 +11,7 @@
 using namespace std;
 
 // TAMANHO DA TABELA HASH (ALTERE AQUI CASO DESEJAR)
-int tabela_hash_tam = 6;
+int tabela_hash_tam = 10;
 
 // Definição da estrutura do registro
 struct registro_t {
@@ -83,7 +83,7 @@ void lista_registros_listar(lista_registros_t *lista){
 // Função que lista as posições da tabela
 void tabela_hash_registros_listar(tabela_hash_t tabela_hash) {
     for(int i=0;i<tabela_hash_tam;i++) {
-        cout << "---------- POSIÇÃO " << i << " DA TABELA HASH: ----------" << endl;
+        cout << ">>>>>>>>>> POSIÇÃO " << i << " DA TABELA HASH: <<<<<<<<<<" << endl;
         lista_registros_listar(tabela_hash[i]);
     }
 }
