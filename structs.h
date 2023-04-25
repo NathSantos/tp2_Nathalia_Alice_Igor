@@ -9,8 +9,8 @@ struct registro_t {
 };
 
 struct bucket_t {
-    int num_bucket;
-    int tipo_bucket;
-    registro_t *registro1;
-    registro_t *registro2;
+    int num_bucket;         // número do bucket
+    int tipo_bucket;        // 0 = principal, 1 = overflow
+    registro_t *registro1;  // ponteiro para o registro 1
+    registro_t *registro2;  // ponteiro para o registro 2
 };
