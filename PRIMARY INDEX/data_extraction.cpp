@@ -19,7 +19,7 @@ typedef struct registro_t{
     char autores[151];
     int citacoes;
     char atualizacao[20];
-    char snippet[1025];
+    char *snippet;
 } registro_t;
 
 typedef struct bloco_t{
