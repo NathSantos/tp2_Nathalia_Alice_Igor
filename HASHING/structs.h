@@ -16,7 +16,7 @@ struct registro_t {
 
 struct bloco_t {
     bloco_t *proxOverflow;      // ponteiro para o próximo bucket de overflow, caso exista
-    registro_t registros[BUCKET_SIZE - sizeof(bloco_t *)];     // array de registros com BUCKET_SIZE bytes
+    registro_t registros[BUCKET_SIZE - sizeof(bloco_t *)];     // array de registros
 };
 
 struct arquivo_t {
