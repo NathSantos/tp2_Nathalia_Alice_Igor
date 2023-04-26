@@ -14,24 +14,29 @@ int funcaoHash(int id) {
 }
 
 void inicializaBuckets(arquivo_t *arquivo, fstream &arquivo_binario) {
+    cout <<"teste" << endl;
     for (int i = 0; i < NUMBER_OF_BUCKETS; i++) {
-        arquivo->bucket[i].proxOverflow = NULL;
-        arquivo->bucket[i].registros = NULL;
+        cout <<"teste" << endl;
+        arquivo->buckets[i].proxOverflow = NULL;
+        cout << sizeof(arquivo->buckets[i].registros) << endl;
+        memset(arquivo->buckets[i].registros, 0, sizeof(arquivo->buckets[i].registros)); // preenche esse espaço de registros com zeros
     
         // Escreve o bucket no arquivo binário
-        arquivo_binario.write(reinterpret_cast<char*>(&arquivo->bucket[i]), sizeof(bloco_t));
+        arquivo_binario.write(reinterpret_cast<char*>(&arquivo->buckets[i]), sizeof(bloco_t));
     }
 }
 
 int main(int argc, char *argv[]) {
 
-    ifstream arq(argv[1]); // abre o arquivo .csv
+    //ifstream arq(argv[1]); // abre o arquivo .csv
 
     // Abrir o arquivo binário para escrita
     fstream file("arquivo_dados.bin", ios::out | ios::binary);
     
     arquivo_t arquivo;
+
     inicializaBuckets(&arquivo, file);
+
 
     // Fechar o arquivo de escrita
     file.close();
@@ -46,10 +51,7 @@ int main(int argc, char *argv[]) {
     // Printar o endereço de memória inicial de cada bucket
     for (int i = 0; i < NUMBER_OF_BUCKETS; i++) {
         cout << "Endereço de memória do bucket " << i << ": " << &arquivo_read.buckets[i] << endl;
-        cout << "Tamanho do bucket " << i << ": " << sizeof(&arquivo_read.buckets[i].num_bucket) << endl;
-        cout << "Tamanho do bucket " << i << ": " << sizeof(&arquivo_read.buckets[i].proxOverflow) << endl;
-        cout << "Tamanho do bucket " << i << ": " << sizeof(&arquivo_read.buckets[i].tipo_bucket) << endl;
-        cout << "Tamanho do bucket " << i << ": " << sizeof(&arquivo_read.buckets[i].registro1) << endl;
+        //cout << "Tamanho do bucket " << i << ": " << sizeof(&arquivo_read.buckets[i].registros) << endl;
     }
     
     // Fechar o arquivo de leitura
