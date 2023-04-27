@@ -26,17 +26,22 @@ typedef struct registro_t{
 } registro_t;
 
 typedef struct bloco_t{
-    int endereco;
-    registro_t registros[4092];
+    uint8_t registros[4092];
 }bloco_t;
 
 using namespace std;
 
+bloco_t bloco;
+int deslocamento = 0;
+int cont_bloco = 0;
+
+
 // ADICIONA REGISTRO DO ARRAY PARA STRUCT
-registro_t add_reg (ofstream &output, string reg[]){
+registro_t * add_reg (ofstream &output, string reg[]){
 
     // inicializa novo registro
-    registro_t registro;
+    registro_t * registro;
+    registro = new registro_t;
 
     // verifica se há "NULL" e ajeita tamanho
     for (int i = 0; i < 7; i++){
@@ -47,40 +52,55 @@ registro_t add_reg (ofstream &output, string reg[]){
 
     // calcula tamanho
     int tam = 0;
-    for (int i = 0; i < 7; i++){
-        tam += reg[i].size();
-    } // end for
+    tam += sizeof(int) * 4;
+    tam += reg[1].size() + 1;
+    tam += reg[3].size() + 1;
+    tam += reg[5].size() + 1;
+    tam += reg[6].size() + 1;
+
 
     // define tamanhos das strings
-    registro.titulo = new char[reg[1].size()];
-    registro.autores = new char[reg[3].size()];
-    registro.atualizacao = new char[reg[5].size()];
-    registro.snippet = new char[reg[6].size()];
+    registro->titulo = new char[reg[1].size() + 1];
+    registro->autores = new char[reg[3].size() + 1];
+    registro->atualizacao = new char[reg[5].size() + 1];
+    registro->snippet = new char[reg[6].size() + 1];
 
+    
     // preenche campos do registro
-    registro.tamanho = tam;
-    registro.id = stoi(reg[0]);
-    strcpy(registro.titulo, reg[1].c_str());
-    registro.ano = stoi(reg[2]);
-    strcpy(registro.autores, reg[3].c_str());
-    registro.citacoes = stoi(reg[4]);
-    strcpy(registro.atualizacao, reg[5].c_str());
-    strcpy(registro.snippet, reg[6].c_str());
+    registro->tamanho = tam;
+    registro->id = stoi(reg[0]);
+    strcpy(registro->titulo, reg[1].c_str());
+    registro->ano = stoi(reg[2]);
+    strcpy(registro->autores, reg[3].c_str());
+    registro->citacoes = stoi(reg[4]);
+    strcpy(registro->atualizacao, reg[5].c_str());
+    strcpy(registro->snippet, reg[6].c_str());
 
     return registro;
 } // end
 
-void print_reg(ofstream& output, registro_t registro){
-
-    output << "TAMANHO: " << registro.tamanho << endl;
-    output << "ID: " << registro.id << endl;
-    output << "Título: " << registro.titulo << endl;
-    output << "Ano: " << registro.ano << endl;
-    output << "Autores: " << registro.autores << endl;
-    output << "Citações: " << registro.citacoes << endl;
-    output << "Atualização: " << registro.atualizacao << endl;
-    output << "Snippet: " << registro.snippet << endl << endl;
+void aloca_registro(registro_t * r1){
+    memcpy(&bloco.registros[deslocamento], r1, r1->tamanho);
+    deslocamento += r1->tamanho;
+    delete r1->titulo;
+    delete r1->autores;
+    delete r1->atualizacao;
+    delete r1->snippet;
+    delete r1;
 }
+
+void print_reg(ofstream& output, registro_t *registro){
+
+    output << "TAMANHO: " << registro->tamanho << endl;
+    output << "ID: " << registro->id << endl;
+    output << "Título: " << registro->titulo << endl;
+    output << "Ano: " << registro->ano << endl;
+    output << "Autores: " << registro->autores << endl;
+    output << "Citações: " << registro->citacoes << endl;
+    output << "Atualização: " << registro->atualizacao << endl;
+    output << "Snippet: " << registro->snippet << endl << endl;
+}
+
 
 // MAIN
 int main(){
@@ -92,8 +112,6 @@ int main(){
     string line; // string auxiliar
     regex pattern("\"([^\"]*)\""); // padrão auxiliar
     smatch matches; // variavel auxiliar
-
-    registro_t *registros;
 
     // para cada linha do arquivo
     while (getline(input, line)){
@@ -118,8 +136,9 @@ int main(){
 
             // verifica se é último registro
             if (cont == 6){
-                registro_t registro = (add_reg(output, reg));
+                registro_t *registro = (add_reg(output, reg));
                 print_reg(output, registro);
+                // aloca_registro(registro);
                 cont = 0; // reinicia cont
             } else { 
                 cont++; // incrementa cont
