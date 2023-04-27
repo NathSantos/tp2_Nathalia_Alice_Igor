@@ -15,10 +15,13 @@ struct registro_t {
 };
 
 struct bloco_t {
-    bloco_t *proxOverflow;      // ponteiro para o próximo bucket de overflow, caso exista
-    registro_t registros[BUCKET_SIZE - sizeof(bloco_t *)];     // array de registros
+    int endereco;       // endereço do bloco na memória secundária
+    bloco_t *proximo;   // ponteiro para o próximo bloco de overflow, caso exista
+    registro_t registros[BUCKET_SIZE - sizeof(bloco_t*) - sizeof(int)];
 };
 
-struct arquivo_t {
-    bloco_t buckets[NUMBER_OF_BUCKETS];
+struct bucket_t {
+    int endereco_bloco; // endereço do bloco na memória secundária
 };
+
+typedef bloco_t** tabela_hash_t;

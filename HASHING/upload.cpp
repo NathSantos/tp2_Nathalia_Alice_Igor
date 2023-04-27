@@ -13,28 +13,81 @@ int funcaoHash(int id) {
     return id % NUMBER_OF_BUCKETS;
 }
 
-void inicializaBuckets(arquivo_t *arquivo, fstream &arquivo_binario) {
-    cout <<"teste" << endl;
-    for (int i = 0; i < NUMBER_OF_BUCKETS; i++) {
-        cout <<"teste" << endl;
-        arquivo->buckets[i].proxOverflow = NULL;
-        cout << sizeof(arquivo->buckets[i].registros) << endl;
-        memset(arquivo->buckets[i].registros, 0, sizeof(arquivo->buckets[i].registros)); // preenche esse espaço de registros com zeros
-    
-        // Escreve o bucket no arquivo binário
-        arquivo_binario.write(reinterpret_cast<char*>(&arquivo->buckets[i]), sizeof(bloco_t));
+// Função que cria a tabela hash 
+tabela_hash_t tabela_hash_criar() {
+    tabela_hash_t tabela = new bloco_t*[NUMBER_OF_BUCKETS];
+    for(int i=0; i<NUMBER_OF_BUCKETS; i++) {
+        tabela[i] = nullptr;
+    }
+    return tabela;
+}
+
+void insere_registro_overflow(registro_t registro, bloco_t *bloco) {
+    int num_registros = (BUCKET_SIZE - sizeof(bloco->endereco) - sizeof(int)) / sizeof(registro_t);
+    for (int i = 0; i < num_registros; i++) {
+        // se o registro está vazio (ID igual a 0 pois não tem nenhum registro com ID 0)
+        if (bloco->registros[i].id == 0) {
+            memcpy(&bloco->registros[i], &registro, sizeof(registro));
+            return;
+        }
+    }
+    // se não há espaço livre no bloco atual, procura nos blocos de overflow
+    if(bloco->proximo != NULL) {
+        insere_registro_overflow(registro, bloco->proximo);
+    }
+    // se não há um bloco de overflow sendo apontado, cria um novo
+    else {
+        bloco->proximo = (bloco_t*)malloc(sizeof(bloco_t));
+        bloco->proximo->endereco = 0;
+        bloco->proximo->proximo = NULL;
+        memcpy(&bloco->proximo->registros[0], &registro, sizeof(registro));
     }
 }
 
+void insere_registro(registro_t registro, tabela_hash_t tabela) {
+    int posicao = funcaoHash(registro.id);
+    
+    bloco_t *bloco_atual = tabela[posicao];
+    while (bloco_atual != NULL) {
+        int espaco_livre = BUCKET_SIZE - sizeof(bloco_atual->endereco) - sizeof(int) - bloco_atual->registros[0].tam_titulo - bloco_atual->registros[0].tam_autores - bloco_atual->registros[0].tam_snippet;
+        
+        // se há espaço livre no bloco atual
+        if (bloco_atual->endereco != 0 && espaco_livre >= sizeof(registro)) {
+            int num_registros = (BUCKET_SIZE - sizeof(bloco_atual->endereco) - sizeof(int)) / sizeof(registro_t);
+            for (int i = 0; i < num_registros; i++) {
+                // se o registro está vazio (ID igual a 0 pois não tem nenhum registro com ID 0)
+                if (bloco_atual->registros[i].id == 0) {
+                    memcpy(&bloco_atual->registros[i], &registro, sizeof(registro));
+                    return;
+                }
+            }
+        } 
+        // se não há espaço livre no bloco atual, procura nos blocos de overflow
+        else {
+            // se há um bloco de overflow sendo apontado
+            if(bloco_atual->proximo != NULL) {
+                insere_registro_overflow(registro, bloco_atual->proximo);
+            }
+            // se não há um bloco de overflow sendo apontado, cria um novo
+            else {
+                bloco_atual->proximo = (bloco_t*)malloc(sizeof(bloco_t));
+                bloco_atual->proximo->endereco = 0;
+                memcpy(&bloco_atual->proximo->registros[0], &registro, sizeof(registro));
+                return;
+            }
+        }
+    }
+}
+
+
 int main(int argc, char *argv[]) {
 
-    //ifstream arq(argv[1]); // abre o arquivo .csv
+    ifstream arq(argv[1]); // abre o arquivo .csv
 
     // Abrir o arquivo binário para escrita
     fstream file("arquivo_dados.bin", ios::out | ios::binary);
     
     arquivo_t arquivo;
-
     inicializaBuckets(&arquivo, file);
 
 
@@ -51,7 +104,9 @@ int main(int argc, char *argv[]) {
     // Printar o endereço de memória inicial de cada bucket
     for (int i = 0; i < NUMBER_OF_BUCKETS; i++) {
         cout << "Endereço de memória do bucket " << i << ": " << &arquivo_read.buckets[i] << endl;
-        //cout << "Tamanho do bucket " << i << ": " << sizeof(&arquivo_read.buckets[i].registros) << endl;
+        cout << "Tamanho do bucket " << i << ": " << sizeof(arquivo_read.buckets[i]) << endl;
+        cout << "Tamanho do bucket " << i << ": " << sizeof(arquivo_read.buckets[i].registro1) << endl;
+        cout << "Tamanho do bucket " << i << ": " << sizeof(arquivo_read.buckets[i].registro2) << endl;
     }
     
     // Fechar o arquivo de leitura
@@ -115,42 +170,6 @@ int main(int argc, char *argv[]) {
     //         strncpy(registro.snippet, campo.c_str(), sizeof(registro.snippet));
     //         registro.snippet[sizeof(registro.snippet) - 1] = '\0';
     //         registro.tam_snippet = strlen(registro.snippet);
-    //     }
-        
-    //     // Calcula o hash do registro
-    //     int hash = funcaoHash(registro.id);
-
-    //     // Encontra o bucket correspondente
-    //     bucket_t *bucket = &arquivo.buckets[hash];
-
-    //     // Adiciona o registro ao bucket
-    //     if (!bucket->registro1) {
-    //         bucket->registro1 = new registro_t(registro);
-    //     } else if (!bucket->registro2) {
-    //         bucket->registro2 = new registro_t(registro);
-    //     } else if (!bucket->registro3) {
-    //         bucket->registro3 = new registro_t(registro);
-    //     } else if (!bucket->registro4) {
-    //         bucket->registro4 = new registro_t(registro);
-    //     } else {
-    //         // Se o bucket estiver cheio, cria um bucket de overflow
-    //         if (!bucket->proxOverflow) {
-    //             bucket->proxOverflow = new bucket_t();
-    //             bucket->proxOverflow->tipo_bucket = 1;
-    //         }
-    //         // Adiciona o registro ao bucket de overflow
-    //         if (!bucket->proxOverflow->registro1) {
-    //             bucket->proxOverflow->registro1 = new registro_t(registro);
-    //         } else if (!bucket->proxOverflow->registro2) {
-    //             bucket->proxOverflow->registro2 = new registro_t(registro);
-    //         } else if (!bucket->proxOverflow->registro3) {
-    //             bucket->proxOverflow->registro3 = new registro_t(registro);
-    //         } else if (!bucket->proxOverflow->registro4) {
-    //             bucket->proxOverflow->registro4 = new registro_t(registro);
-    //         } else {
-    //             // Se o bucket de overflow também estiver cheio, ignore o registro
-    //             // ou crie outro bucket de overflow, dependendo do seu requisito
-    //         }
     //     }
 
     //     cout << "ID: " << registro.id << endl;
