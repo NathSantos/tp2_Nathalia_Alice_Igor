@@ -76,6 +76,14 @@ int main(){
         string reg[7]; // array auxiliar
         int cont = 0; // contador auxiliar
 
+        std::string substr = "NULL";
+        std::string new_substr = "\"NULL\"";
+
+        size_t pos = line.find(substr); // encontrar a posição da substring "x"
+        if (pos != std::string::npos) { // se a substring for encontrada
+            line.replace(pos, substr.length(), new_substr); // substituir a substring
+        }
+
         // coloca fields separados por ";" no array auxiliar
         while (std::regex_search(line, matches, pattern)) {
             reg[cont] = matches[1];
