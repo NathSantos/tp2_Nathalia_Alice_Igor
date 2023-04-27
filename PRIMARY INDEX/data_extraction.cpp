@@ -79,16 +79,6 @@ registro_t * add_reg (ofstream &output, string reg[]){
     return registro;
 } // end
 
-void aloca_registro(registro_t * r1){
-    memcpy(&bloco.registros[deslocamento], r1, r1->tamanho);
-    deslocamento += r1->tamanho;
-    delete r1->titulo;
-    delete r1->autores;
-    delete r1->atualizacao;
-    delete r1->snippet;
-    delete r1;
-}
-
 void print_reg(ofstream& output, registro_t *registro){
 
     output << "TAMANHO: " << registro->tamanho << endl;
@@ -138,7 +128,6 @@ int main(){
             if (cont == 6){
                 registro_t *registro = (add_reg(output, reg));
                 print_reg(output, registro);
-                // aloca_registro(registro);
                 cont = 0; // reinicia cont
             } else { 
                 cont++; // incrementa cont
