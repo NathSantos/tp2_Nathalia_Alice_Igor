@@ -70,7 +70,7 @@ registro_t add_reg (ofstream &output, string reg[]){
     return registro;
 } // end
 
-void printa(ofstream& output, registro_t registro){
+void print_reg(ofstream& output, registro_t registro){
 
     output << "TAMANHO: " << registro.tamanho << endl;
     output << "ID: " << registro.id << endl;
@@ -119,7 +119,7 @@ int main(){
             // verifica se é último registro
             if (cont == 6){
                 registro_t registro = (add_reg(output, reg));
-                printa(output, registro);
+                print_reg(output, registro);
                 cont = 0; // reinicia cont
             } else { 
                 cont++; // incrementa cont
