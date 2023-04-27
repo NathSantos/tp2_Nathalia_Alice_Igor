@@ -15,13 +15,12 @@ struct registro_t {
 };
 
 struct bloco_t {
-    int endereco;       // endereço do bloco na memória secundária
-    bloco_t *proximo;   // ponteiro para o próximo bloco de overflow, caso exista
-    registro_t registros[BUCKET_SIZE - sizeof(bloco_t*) - sizeof(int)];
+    int endereco_overflow;       // endereço do bloco de overflow, caso haja, que esse bloco aponta
+    registro_t registros[BUCKET_SIZE - sizeof(int)];
 };
 
 struct bucket_t {
     int endereco_bloco; // endereço do bloco na memória secundária
 };
 
-typedef bloco_t** tabela_hash_t;
+typedef bucket_t** tabela_hash_t;
