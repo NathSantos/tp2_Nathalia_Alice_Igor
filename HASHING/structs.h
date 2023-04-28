@@ -1,5 +1,12 @@
-#define BUCKET_SIZE 4096  
+#define BLOCO_SIZE 4096  
 #define NUMBER_OF_BUCKETS 5
+
+struct cabecalho_t {
+    int tamanho_arquivo;
+    int tamanho_bloco;
+    int num_blocos_disponiveis;
+    int proximo_bloco_livre;   // endereço do próximo bloco livre
+};
 
 struct registro_t {
     int id;
@@ -16,7 +23,7 @@ struct registro_t {
 
 struct bloco_t {
     int endereco_overflow;       // endereço do bloco de overflow, caso haja, que esse bloco aponta
-    registro_t registros[BUCKET_SIZE - sizeof(int)];
+    registro_t registros[BLOCO_SIZE - sizeof(int)];
 };
 
 struct bucket_t {

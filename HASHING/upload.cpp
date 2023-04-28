@@ -8,6 +8,33 @@
 
 using namespace std;
 
+// ===============================================================================
+// ===========================    FUNÇÕES CABEÇALHO    ===========================
+// ===============================================================================
+
+// Inicializa o Cabeçalho do arquivo binário
+void inicializarCabecalho(cabecalho_t& cabecalho, int tamanho_arquivo, int tamanho_bloco) {
+    cabecalho.tamanho_arquivo = tamanho_arquivo;
+    cabecalho.tamanho_bloco = BLOCO_SIZE;
+    cabecalho.num_blocos_disponiveis = tamanho_arquivo / tamanho_bloco;
+    cabecalho.proximo_bloco_livre = 0;
+}
+
+// Atualiza o cabeçalho do arquivo binário para alocar um novo bloco
+int alocarBloco(cabecalho_t& cabecalho) {
+    if (cabecalho.num_blocos_disponiveis == 0) {
+        return -1; // erro: não há blocos disponíveis
+    }
+    int endereco = cabecalho.proximo_bloco_livre * cabecalho.tamanho_bloco;
+    cabecalho.proximo_bloco_livre++;
+    cabecalho.num_blocos_disponiveis--;
+    return endereco;
+}
+
+// ===============================================================================
+// ==============================    FUNÇÕES HASH    =============================
+// ===============================================================================
+
 // Função que calcula o hash de um registro com base no ID e retorna o número do bucket correspondente
 int funcaoHash(int id) {
     return id % NUMBER_OF_BUCKETS;
@@ -21,7 +48,7 @@ void insere_registro_overflow(registro_t registro, int endereco_bloco_overflow, 
     bloco_t bloco;
     arquivo_binario.read((char*) &bloco, sizeof(bloco_t));
 
-    int espaco_livre = BUCKET_SIZE - (sizeof(bloco.endereco_overflow) - sizeof(bloco.registros));
+    int espaco_livre = BLOCO_SIZE - (sizeof(bloco.endereco_overflow) - sizeof(bloco.registros));
 
     // se há espaço livre no bloco atual
     if(espaco_livre > sizeof(registro)) {
@@ -30,7 +57,7 @@ void insere_registro_overflow(registro_t registro, int endereco_bloco_overflow, 
         arquivo_binario.seekp(bytes_a_pular, ios::cur);
 
         // insere o registro no final do vetor de registros do bloco
-        int posicao_registro = BUCKET_SIZE - espaco_livre;
+        int posicao_registro = BLOCO_SIZE - espaco_livre;
         memcpy(&(bloco.registros[posicao_registro]), &registro, sizeof(registro));
 
         // salva o bloco atualizado no arquivo
@@ -84,9 +111,9 @@ void insere_registro(registro_t registro, tabela_hash_t tabela, fstream &arquivo
 
         // lê o bloco apontado pelo bucket
         bloco_t bloco_atual;
-        arquivo_binario.read((char*) &bloco_atual, sizeof(bloco_t));
+        arquivo_binari o.read((char*) &bloco_atual, sizeof(bloco_t));
 
-        int espaco_livre = BUCKET_SIZE - (sizeof(bloco_atual.endereco_overflow) - sizeof(bloco_atual.registros));
+        int espaco_livre = BLOCO_SIZE - (sizeof(bloco_atual.endereco_overflow) - sizeof(bloco_atual.registros));
 
         // se há espaço livre no bloco atual
         if(espaco_livre > sizeof(registro)) {
@@ -95,7 +122,7 @@ void insere_registro(registro_t registro, tabela_hash_t tabela, fstream &arquivo
             arquivo_binario.seekp(bytes_a_pular, ios::cur);
 
             // insere o registro no final do vetor de registros do bloco
-            int posicao_registro = BUCKET_SIZE - espaco_livre;
+            int posicao_registro = BLOCO_SIZE - espaco_livre;
             memcpy(&(bloco_atual.registros[posicao_registro]), &registro, sizeof(registro));
 
             // salva o bloco atualizado no arquivo
@@ -126,6 +153,10 @@ void insere_registro(registro_t registro, tabela_hash_t tabela, fstream &arquivo
         }
     }
 }
+
+// ===============================================================================
+// ==================================    MAIN    =================================
+// ===============================================================================
 
 int main(int argc, char *argv[]) {
 
