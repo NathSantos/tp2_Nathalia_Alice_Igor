@@ -1,12 +1,12 @@
 #define BLOCO_SIZE 4096  
 #define NUMBER_OF_BUCKETS 5
 
-struct cabecalho_t {
-    int tamanho_arquivo;
-    int tamanho_bloco;
-    int num_blocos_disponiveis;
-    int proximo_bloco_livre;   // endereço do próximo bloco livre
-};
+// struct cabecalho_t {
+//     int tamanho_arquivo;
+//     int tamanho_bloco;
+//     int num_blocos_disponiveis;
+//     int proximo_bloco_livre;   // endereço do próximo bloco livre
+// };
 
 struct registro_t {
     int id;
