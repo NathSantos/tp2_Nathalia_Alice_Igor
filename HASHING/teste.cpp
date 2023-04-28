@@ -89,7 +89,7 @@ int funcaoHash(int id) {
 // }
 
 // ===============================================================================
-// ==================================    MAIN    =================================
+// ================    FUNÇÕES AUXILIARES NA EXTRAÇÃO DE DADOS    ================
 // ===============================================================================
 
 // Função que faz a leitura de um campo do arquivo de entrada e ignora o caracter ";" dentro de aspas
@@ -121,13 +121,19 @@ string read_field_exception(stringstream &ss) {
     return field;
 }
 
+// ===============================================================================
+// ==================================    MAIN    =================================
+// ===============================================================================
+
 int main(int argc, char *argv[]) {
 
     ifstream arq(argv[1]);                                      // abre o arquivo de entrada passado como argumento
     fstream file("arquivo_dados.bin", ios::out | ios::binary);  // abre o arquivo binário para escrita em disco
     string linha;
 
-    // ==================================    EXTRAÇÃO DE DADOS DO ARQUIVO DE ENTRADA    =================================
+    // ---------------------------------------------------
+    // ||    EXTRAÇÃO DOS DADOS DO ARQUIVO DE ENTRADA   ||
+    // ---------------------------------------------------
 
     while (getline(arq, linha)) {
         registro_t *registro = new registro_t();    // cria um novo registro
@@ -253,5 +259,7 @@ int main(int argc, char *argv[]) {
         delete registro;    // desaloca o registro
     }
 
-    // ==================================    CHAMADA DE FUNÇÕES HASH    =================================
+    // ---------------------------------------------------
+    // ||            CHAMADA DE FUNÇÕES HASH            ||
+    // ---------------------------------------------------
 }
