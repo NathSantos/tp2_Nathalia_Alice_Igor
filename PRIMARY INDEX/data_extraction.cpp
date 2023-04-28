@@ -31,11 +31,6 @@ typedef struct bloco_t{
 
 using namespace std;
 
-bloco_t bloco;
-int deslocamento = 0;
-int cont_bloco = 0;
-
-
 // ADICIONA REGISTRO DO ARRAY PARA STRUCT
 registro_t * add_reg (ofstream &output, string reg[]){
 
