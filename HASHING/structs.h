@@ -10,24 +10,21 @@
 
 struct registro_t {
     int id;
-    int tam_titulo;     // tamanho do campo título
     char titulo[301]; 
     int ano;
-    int tam_autores;    // tamanho do campo autores
     char autores[151];
     int citacoes;
     char atualizacao[20];
-    int tam_snippet;        // tamanho do campo snippet
     char snippet[1025];
 };
 
 struct bloco_t {
-    int endereco_overflow;       // endereço do bloco de overflow, caso haja, que esse bloco aponta
-    registro_t registros[BLOCO_SIZE - sizeof(int)];
+    registro_t registros[2];
 };
 
 struct bucket_t {
-    int endereco_bloco; // endereço do bloco na memória secundária
+    int endereco_bloco1; // endereço do bloco 1 na memória secundária
+    int endereco_bloco2; // endereço do bloco 2 na memória secundária
 };
 
 typedef bucket_t** tabela_hash_t;
