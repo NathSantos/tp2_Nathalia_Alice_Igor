@@ -1,12 +1,6 @@
-#define BLOCO_SIZE 4096  
-#define NUMBER_OF_BUCKETS 5
-
-// struct cabecalho_t {
-//     int tamanho_arquivo;
-//     int tamanho_bloco;
-//     int num_blocos_disponiveis;
-//     int proximo_bloco_livre;   // endereço do próximo bloco livre
-// };
+#define BLOCO_SIZE 4096         // tamanho do bloco em bytes
+#define NUMBER_OF_BUCKETS 5     // número de buckets na tabela hash
+#define NUMBER_OF_REGISTROS 2   // número de registros por bloco
 
 struct registro_t {
     int id;
@@ -19,7 +13,9 @@ struct registro_t {
 };
 
 struct bloco_t {
-    registro_t registros[2];
+    registro_t registros[NUMBER_OF_REGISTROS];
+    int num_registros_atualmente = 0;
+    unsigned char ocupa[BLOCO_SIZE - (sizeof(registro_t) * NUMBER_OF_REGISTROS) - sizeof(int)];
 };
 
 struct bucket_t {
