@@ -4,35 +4,44 @@
 
 //======================================//
 
-// INCLUDE
 #include <iostream>
 
 using namespace std;
 
-// GLOBAL
-const int MAX_KEYS = 4; // número máximo de chaves por nó
-const int MIN_KEYS = 2; // número mínimo de chave por nó (exceto raiz)
+#define M 4
 
+//======================================//
 // TIPOS
 
-typedef int key_t;
-
+// TIPO NÓ
 typedef struct node_t{
-        key_t keys[MAX_KEYS];
-        struct node *parent;
-        struct node *children[MAX_KEYS + 1];
+        int n; // número de chaves no nó
+        int keys[M-1]; // chaves do nó
+        struct node *children[M]; // ponteiro para filhos do nó
+        int leaf; // indica se nó é folha (1) ou não (0)
 }node_t;
 
-typedef struct leaf_t{
-        key_t keys[MAX_KEYS];
-        node_t *parent;
-        struct leaf_t *prev;
-        struct leaf_t *next;
-}leaf_t;
-
+// TIPO ÁRVORE
 typedef struct bplus_t{
         node_t *root;
 }bplus_t;
+
+//======================================//
+// FUNÇÕES
+
+// CRIA NÓ DA ÁRVORE B+
+node_t * create_node() {
+
+    node_t * new_node = (node_t*) new node_t; // aloca novo nó
+
+    new_node->n = 0; // define número de chaves inicial
+    new_node->leaf = 1; // define que é folha
+    for (int i = 0; i < M; i++) {
+        new_node->child[i] = NULL; // define filhos
+    } // end for
+
+    return new_node; // retorna novo nó
+} // end
 
 //======================================//
 
