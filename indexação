@@ -1,0 +1,4 @@
+Na árvore B+, as folhas contêm registros de dados e os nós internos contêm ponteiros para outras páginas da árvore B+. Em outras palavras, 
+as folhas armazenam as chaves e os valores correspondentes, enquanto os nós internos armazenam chaves e ponteiros para outras páginas da árvore.
+A estrutura de uma árvore B+ é otimizada para operações de busca sequencial em grandes conjuntos de dados, como em bancos de dados, por exemplo.
+A ordem da árvore B+ determina o número máximo de filhos que cada nó pode ter, o que afeta diretamente o desempenho da árvore.
