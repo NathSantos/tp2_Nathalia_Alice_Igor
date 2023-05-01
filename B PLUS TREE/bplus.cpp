@@ -348,54 +348,19 @@ int main(int argc, char* argv[])
 	string command;
 	int x;
 	bool close = false;
-	string logBuffer;//used to save into log
+	string logBuffer;
 	ifstream fin;
 	ofstream fout;
-	//create tree from log file from command line input
-	if(argc > 1)
-	{
-		fin.open(argv[1]);//open file
-		if(!fin.is_open())
-		{
-			cout<<"File not found\n";
-			return 0;
-		}
-		int i = 1;
-		getline(fin, logBuffer, '\0');//copy log from file to logBuffer for saving purpose
-		fin.close();
-		fin.open(argv[1]);//reopening file
-		getline(fin,command);
-		stringstream max(command);//first line of log contains the max degree
-		max>>MAX;
-		while(getline(fin,command))//iterating over every line ie command
-		{
-			if(!command.substr(0,6).compare("insert"))
-			{
-				stringstream argument(command.substr(7));
-				argument>>x;
-				bpt.insert(x);
-			}
-			else
-			{
-				cout<<"Unknown command: "<<command<<" at line #"<<i<<"\n";
-				return 0;
-			}
-			i++;
-		}
-		cout<<"Tree loaded successfully from: \""<<argv[1]<<"\"\n";
-		fin.close();
-	}
-	else//create fresh tree
-	{
-		cout<<"Enter the max degree\n";
-		cin>>command;
-		stringstream max(command);
-		max>>MAX;
-		logBuffer.append(command);
-		logBuffer.append("\n");
-		cin.clear();
-		cin.ignore(1);
-	}
+
+	cout<<"Enter the max degree\n";
+	cin>>command;
+	stringstream max(command);
+	max>>MAX;
+	logBuffer.append(command);
+	logBuffer.append("\n");
+	cin.clear();
+	cin.ignore(1);
+
 	//command line menu
 	cout<<"Commands:\nsearch <value> to search\n";
 	cout<<"insert <value> to insert\n";
