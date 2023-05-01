@@ -6,8 +6,6 @@
 
 using namespace std;
 
-//============================================================================================================//
-
 int MAX = 3; // Tamanho de cada nó
 
 class BPTree; // ÁRVORE B+
@@ -305,27 +303,3 @@ void BPTree::display(Node* cursor){
 Node* BPTree::getRoot(){
 	return root;
 } // end
-
-//============================================================================================================//
-
-int main(int argc, char* argv[])
-{
-	BPTree bpt;
-
-	bpt.insert(1);
-	bpt.insert(2);
-	bpt.insert(3);
-	bpt.insert(4);
-	bpt.insert(5);
-	bpt.insert(6);
-
-	bpt.display(bpt.getRoot());
-
-	bpt.search(7);
-	bpt.search(8);
-	bpt.search(2);
-
-	return 0;
-}
-
-//============================================================================================================//
