@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
 
 	cout << "\n\n" << endl;
 
-	bpt.display(bpt.getRoot());
+	bpt.leaf(bpt.getRoot());
 
-	bpt.search(7);
+	bpt.search(4);
 	//bpt.search(8);
 	//bpt.search(2);
 
