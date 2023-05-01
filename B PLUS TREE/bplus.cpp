@@ -6,9 +6,9 @@
 
 using namespace std;
 
-int MAX; // Tamanho de cada nó
-
 //============================================================================================================//
+
+int MAX = 3; // Tamanho de cada nó
 
 class BPTree; // ÁRVORE B+
 
@@ -43,20 +43,16 @@ class BPTree{
 		Node* getRoot();
 };
 
-//============================================================================================================//
-
 // MÉTODOS CONSTRUTOR DO NÓ
 Node::Node(){
 	key = new int[MAX];
 	ptr = new Node*[MAX+1];
-}
+} // end
 
 // MÉTODOS CONSTRUTOR DA ÁRVORE B+
 BPTree::BPTree(){
 	root = NULL;
-}
-
-//============================================================================================================//
+} // end
 
 // BPTREE: BUSCA DE CHAVE NA ÁRVORE
 void BPTree::search(int x){
@@ -93,8 +89,6 @@ void BPTree::search(int x){
 	} // end if/else
 
 } // end
-
-//============================================================================================================//
 
 // BPTREE: INSERÇÃO DE CHAVE NA ÁRVORE
 void BPTree::insert(int x){
@@ -199,32 +193,25 @@ void BPTree::insert(int x){
 	}
 } // end
 
-//============================================================================================================//
-
 // BPTREE: INSERÇÃO NO NÓ INTERNO NA ÁRVORE
 void BPTree::insertInternal(int x, Node* cursor, Node* child){
-	if(cursor->size < MAX)
-	{
+	if(cursor->size < MAX){
 		//if cursor is not full
 		//find the correct position for new key
 		int i = 0;
 		while(x > cursor->key[i] && i < cursor->size) i++;
 		//make space for new key
-		for(int j = cursor->size;j > i; j--)
-		{
+		for(int j = cursor->size;j > i; j--){
 			cursor->key[j] = cursor->key[j-1];
 		}//make space for new pointer
-		for(int j = cursor->size+1; j > i+1; j--)
-		{
+		for(int j = cursor->size+1; j > i+1; j--){
 			cursor->ptr[j] = cursor->ptr[j-1];
 		}
 		cursor->key[i] = x;
 		cursor->size++;
 		cursor->ptr[i+1] = child;
 		cout<<"Inserted key in an Internal node successfully\n";
-	}
-	else
-	{
+	} else {
 		cout<<"Inserted key in an Internal node successfully\n";
 		cout<<"Overflow in internal node!\nSplitting internal node\n";
 		//if overflow in internal node
@@ -233,25 +220,21 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child){
 		//create virtual Internal Node;
 		int virtualKey[MAX+1];
 		Node* virtualPtr[MAX+2];
-		for(int i = 0; i < MAX; i++)
-		{
+		for(int i = 0; i < MAX; i++){
 			virtualKey[i] = cursor->key[i];
 		}
-		for(int i = 0; i < MAX+1; i++)
-		{
+		for(int i = 0; i < MAX+1; i++){
 			virtualPtr[i] = cursor->ptr[i];
 		}
 		int i = 0, j;
 		while(x > virtualKey[i] && i < MAX) i++;
 		//make space for new key
-		for(int j = MAX+1;j > i; j--)
-		{
+		for(int j = MAX+1;j > i; j--){
 			virtualKey[j] = virtualKey[j-1];
 		}
 		virtualKey[i] = x; 
 		//make space for new ptr
-		for(int j = MAX+2;j > i+1; j--)
-		{
+		for(int j = MAX+2;j > i+1; j--){
 			virtualPtr[j] = virtualPtr[j-1];
 		}
 		virtualPtr[i+1] = child; 
@@ -260,12 +243,10 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child){
 		cursor->size = (MAX+1)/2;
 		newInternal->size = MAX-(MAX+1)/2;
 		//give elements and pointers to the new node
-		for(i = 0, j = cursor->size+1; i < newInternal->size; i++, j++)
-		{
+		for(i = 0, j = cursor->size+1; i < newInternal->size; i++, j++){
 			newInternal->key[i] = virtualKey[j];
 		}
-		for(i = 0, j = cursor->size+1; i < newInternal->size+1; i++, j++)
-		{
+		for(i = 0, j = cursor->size+1; i < newInternal->size+1; i++, j++){
 			newInternal->ptr[i] = virtualPtr[j];
 		}
 		// m = cursor->key[cursor->size]
@@ -282,116 +263,68 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child){
 			insertInternal(cursor->key[cursor->size] ,findParent(root,cursor) ,newInternal);
 		}
 	}
-}
-
-//============================================================================================================//
+} // end
 
 // BPTREE: PROCURA PAI
 Node* BPTree::findParent(Node* cursor, Node* child){
 	//finds parent using depth first traversal and ignores leaf nodes as they cannot be parents
 	//also ignores second last level because we will never find parent of a leaf node during insertion using this function
 	Node* parent;
-	if(cursor->is_leaf || (cursor->ptr[0])->is_leaf)
-	{
+	if(cursor->is_leaf || (cursor->ptr[0])->is_leaf){
 		return NULL;
 	}
-	for(int i = 0; i < cursor->size+1; i++)
-	{
-		if(cursor->ptr[i] == child)
-		{
+	for(int i = 0; i < cursor->size+1; i++){
+		if(cursor->ptr[i] == child){
 			parent = cursor;
 			return parent;
-		}
-		else
-		{
+		} else {
 			parent = findParent(cursor->ptr[i],child);
 			if(parent!=NULL)return parent;
 		}
 	}
 	return parent;
-}
+} // end
 
-//============================================================================================================//
-
-// BPTREE: DISPLAY PAI
+// BPTREE: DISPLAY
 void BPTree::display(Node* cursor){
 	//depth first display
-	if(cursor!=NULL)
-	{
-		for(int i = 0; i < cursor->size; i++)
-		{
+	if(cursor!=NULL){
+		for(int i = 0; i < cursor->size; i++){
 			cout<<cursor->key[i]<<" ";
 		}
 		cout<<"\n";
-		if(cursor->is_leaf != true)
-		{
-			for(int i = 0; i < cursor->size+1; i++)
-			{
+		if(cursor->is_leaf != true){
+			for(int i = 0; i < cursor->size+1; i++){
 				display(cursor->ptr[i]);
 			}
 		}
 	}
-}
-
-//============================================================================================================//
+} // end
 
 // BPTREE: GET RAIZ DA ÁRVORE
 Node* BPTree::getRoot(){
 	return root;
-}
+} // end
 
 //============================================================================================================//
 
 int main(int argc, char* argv[])
 {
 	BPTree bpt;
-	string command;
-	int x;
-	bool close = false;
-	string logBuffer;
-	ifstream fin;
-	ofstream fout;
 
-	cout<<"Enter the max degree\n";
-	cin>>command;
-	stringstream max(command);
-	max>>MAX;
-	logBuffer.append(command);
-	logBuffer.append("\n");
-	cin.clear();
-	cin.ignore(1);
+	bpt.insert(1);
+	bpt.insert(2);
+	bpt.insert(3);
+	bpt.insert(4);
+	bpt.insert(5);
+	bpt.insert(6);
 
-	//command line menu
-	cout<<"Commands:\nsearch <value> to search\n";
-	cout<<"insert <value> to insert\n";
-	cout<<"display to display\n";
-	do
-	{
-		cout<<"Enter command: ";
-		getline(cin,command);
-		if(!command.substr(0,6).compare("search"))
-		{
-			stringstream argument(command.substr(7));
-			argument>>x;
-			bpt.search(x);
-		}
-		else if(!command.substr(0,6).compare("insert"))
-		{
-			stringstream argument(command.substr(7));
-			argument>>x;
-			bpt.insert(x);
-			logBuffer.append(command);
-			logBuffer.append("\n");
-		}
-		else if(!command.compare("display"))
-		{
-			bpt.display(bpt.getRoot());
-		}
-		else
-		{
-			cout<<"Invalid command\n";
-		}
-	}while(!close);
+	bpt.display(bpt.getRoot());
+
+	bpt.search(7);
+	bpt.search(8);
+	bpt.search(2);
+
 	return 0;
 }
 
