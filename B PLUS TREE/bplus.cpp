@@ -51,7 +51,6 @@ class BPTree{
 
 // MÉTODOS CONSTRUTOR DO NÓ
 Node::Node(){
-	//dynamic memory allocation
 	key = new int[MAX];
 	ptr = new Node*[MAX+1];
 }
@@ -66,21 +65,21 @@ BPTree::BPTree(){
 // BPTREE: BUSCA DE CHAVE NA ÁRVORE
 void BPTree::search(int x)
 {
-	// Verifica se árvore está vazia ou não
-	if (root==NULL){
+	if (root==NULL){ // Se árvore estiver vazia
 		cout << "Tree empty\n";
 	} else {
-		Node* cursor = root; // define cursor para raiz da árvore
+
+		Node* cursor = root; // Define cursor para raiz da árvore
 		
 		// Cursor procura nó folha na árvore (que pode conter chave ou não)
 		while(cursor->is_leaf == false){
 			for(int i = 0; i < cursor->size; i++){
-				if(x < cursor->key[i]){ // se o valor buscado for menor que a chave verificada
-					cursor = cursor->ptr[i]; // atualiza cursor
+				if(x < cursor->key[i]){ // Se o valor buscado for menor que a chave verificada
+					cursor = cursor->ptr[i]; // Atualiza cursor
 					break;
 				} // end if
-				if(i == cursor->size - 1){ // se chegar ao final do cursor
-					cursor = cursor->ptr[i+1]; // atualiza cursor
+				if(i == cursor->size - 1){ // Se chegar ao final do cursor
+					cursor = cursor->ptr[i+1]; // Atualiza cursor
 					break;
 				} // end if
 			} // end for
@@ -89,12 +88,13 @@ void BPTree::search(int x)
 		// Procura chave para ver se existe na folha
 		for(int i = 0; i < cursor->size; i++){
 			if(cursor->key[i] == x){
-				cout << "Found\n"; // chave encontrada
+				cout << "Found\n"; // Chave encontrada
 				return;
 			} // end if
 		} // end for
 
-		cout<<"Not found\n"; // chave não existe
+		cout<<"Not found\n"; // Chave não existe
+
 	} // end if/else
 
 } // end
@@ -103,94 +103,90 @@ void BPTree::search(int x)
 
 // BPTREE: INSERÇÃO DE CHAVE NA ÁRVORE
 void BPTree::insert(int x){
-	//insert logic
+	
+	// Verifica se árvore está vazia ou não
 	if (root==NULL){
-		root = new Node;
-		root->key[0] = x;
-		root->is_leaf = true;
-		root->size = 1;
-		cout << "Created root\nInserted " << x << " successfully\n";
+
+		root = new Node; // Aloca novo nó raiz
+		root->key[0] = x; // Define chave[0] como "x"
+		root->is_leaf = true; // Define nó raiz como folha
+		root->size = 1; // Contador de chaves no nó raiz
+		cout << "Created root\nInserted " << x << " successfully\n"; 
+
 	} else {
-		Node* cursor = root;
-		Node* parent;
-		//in the following while loop, cursor will travel to the leaf node possibly consisting the key
-		while(cursor->is_leaf == false)
-		{
-			parent = cursor;
-			for(int i = 0; i < cursor->size; i++)
-			{
-				if(x < cursor->key[i])
-				{
-					cursor = cursor->ptr[i];
+
+		Node* cursor = root; // Define cursor para raiz da árvore
+		Node* parent; // Define ponteiro para nó pai
+
+		// Cursor procura nó folha na árvore (que pode conter chave ou não)
+		while (cursor->is_leaf == false){ // Enquanto cursor não for folha
+
+			parent = cursor; // Atualiza nó pai
+
+			for(int i = 0; i < cursor->size; i++){ // Percorre chaves do cursor
+
+				if (x < cursor->key[i]){ // Se o valor buscado for menor que a chave verificada
+					cursor = cursor->ptr[i]; // Atualiza cursor
 					break;
-				}
-				if(i == cursor->size - 1)
-				{
-					cursor = cursor->ptr[i+1];
+				} // end if
+				if(i == cursor->size - 1){ // Se chegar ao final do cursor
+					cursor = cursor->ptr[i+1]; // Atualiza cursor
 					break;
-				}
-			}
-		}
-		//now cursor is the leaf node in which we'll insert the new key
-		if(cursor->size < MAX)
-		{
-			//if cursor is not full
-			//find the correct position for new key
+				} // end if
+
+			} // end for
+		} // end while
+
+		if(cursor->size < MAX){ // Se cursor não estiver cheio
+
 			int i = 0;
-			while(x > cursor->key[i] && i < cursor->size) i++;
-			//make space for new key
-			for(int j = cursor->size;j > i; j--)
-			{
-				cursor->key[j] = cursor->key[j-1];
-			}
-			cursor->key[i] = x;
-			cursor->size++;
-			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1];
-			cursor->ptr[cursor->size-1] = NULL;
-			cout<<"Inserted "<<x<<" successfully\n";
-		}
-		else
-		{
-			cout<<"Inserted "<<x<<" successfully\n";
-			cout<<"Overflow in leaf node!\nSplitting leaf node\n";
-			//overflow condition
-			//create new leaf node
-			Node* newLeaf = new Node;
-			//create a virtual node and insert x into it
-			int virtualNode[MAX+1];
-			for(int i = 0; i < MAX; i++)
-			{
+			while(x > cursor->key[i] && i < cursor->size) i++; // Encontra posição para inserir chave
+	
+			for(int j = cursor->size;j > i; j--){ // Desloca chaves para direita
+				cursor->key[j] = cursor->key[j-1]; 
+			} // end for
+
+			cursor->key[i] = x;	// Insere chave no cursor
+			cursor->size++; // Atualiza contador de chaves no cursor
+			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1]; // Atualiza ponteiro do cursor
+			cursor->ptr[cursor->size-1] = NULL; // Atualiza ponteiro do cursor
+			cout << "Inserted " << x << " successfully\n"; 
+
+		} else {
+			cout << "Inserted "<< x <<" successfully\n";
+			cout << "Overflow in leaf node!\nSplitting leaf node\n";
+
+			Node* newLeaf = new Node; // Aloca novo nó folha
+
+			int virtualNode[MAX+1]; // Cria vetor virtual de chaves
+
+			for(int i = 0; i < MAX; i++) { // Copia chaves do cursor para vetor virtual
 				virtualNode[i] = cursor->key[i];
-			}
-			int i = 0, j;
-			while(x > virtualNode[i] && i < MAX) i++;
-			//make space for new key
-			for(int j = MAX+1;j > i; j--)
-			{
-				virtualNode[j] = virtualNode[j-1];
-			}
-			virtualNode[i] = x; 
-			newLeaf->is_leaf = true;
-			//split the cursor into two leaf nodes
-			cursor->size = (MAX+1)/2;
-			newLeaf->size = MAX+1-(MAX+1)/2;
-			//make cursor point to new leaf node
-			cursor->ptr[cursor->size] = newLeaf;
-			//make new leaf node point to the next leaf node
-			newLeaf->ptr[newLeaf->size] = cursor->ptr[MAX];
-			cursor->ptr[MAX] = NULL;
-			//now give elements to new leaf nodes
-			for(i = 0; i < cursor->size; i++)
-			{
+			} // end for
+
+			int i = 0, j; // Encontra posição para inserir chave
+			while(x > virtualNode[i] && i < MAX) i++; // Encontra posição para inserir chave
+			
+			for(int j = MAX+1;j > i; j--){ // Desloca chaves para direita
+				virtualNode[j] = virtualNode[j-1]; // Desloca chaves para direita
+			} // end for
+
+			virtualNode[i] = x; // Insere chave no vetor virtual
+			newLeaf->is_leaf = true; // Define novo nó folha
+			cursor->size = (MAX+1)/2; // Atualiza contador de chaves no cursor
+			newLeaf->size = MAX+1-(MAX+1)/2; // Atualiza contador de chaves no cursor
+			cursor->ptr[cursor->size] = newLeaf; // Atualiza ponteiro do cursor
+			newLeaf->ptr[newLeaf->size] = cursor->ptr[MAX]; // Atualiza ponteiro do cursor
+			cursor->ptr[MAX] = NULL; // Atualiza ponteiro do cursor
+
+			for(i = 0; i < cursor->size; i++){
 				cursor->key[i] = virtualNode[i];
-			}
-			for(i = 0, j = cursor->size; i < newLeaf->size; i++, j++)
-			{
+			} // end for
+			for(i = 0, j = cursor->size; i < newLeaf->size; i++, j++){
 				newLeaf->key[i] = virtualNode[j];
-			}
-			//modify the parent
-			if(cursor == root)
-			{
+			} // end for
+
+			if(cursor == root){
 				//if cursor is a root node, we create a new root
 				Node* newRoot = new Node;
 				newRoot->key[0] = newLeaf->key[0];
@@ -200,12 +196,9 @@ void BPTree::insert(int x){
 				newRoot->size = 1;
 				root = newRoot;
 				cout<<"Created new root\n";
-			}
-			else
-			{
-				//insert new key in parent node
+			} else {
 				insertInternal(newLeaf->key[0],parent,newLeaf);
-			}
+			} // end if/else
 		}
 	}
 } // end
