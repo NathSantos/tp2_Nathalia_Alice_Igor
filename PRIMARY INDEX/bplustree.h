@@ -39,7 +39,7 @@ class BPTree{
 		void insert(int);
 		void display(Node*);
 		Node* getRoot();
-        void leaf(Node*);
+        void getLeaf(Node*);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -301,9 +301,8 @@ void BPTree::display(Node* cursor){
 } // end
 
 // BPTREE: DISPLAY
-void BPTree::leaf(Node* cursor){
-	//depth first display
-	//depth first display
+void BPTree::getLeaf(Node* cursor){
+
 	if(cursor!=NULL){
         
 		for(int i = 0; i < cursor->size; i++){
@@ -314,7 +313,7 @@ void BPTree::leaf(Node* cursor){
 		cout<<"\n";
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
-				display(cursor->ptr[i]);
+				getLeaf(cursor->ptr[i]);
 			}
 		}
 	}
