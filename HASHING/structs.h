@@ -1,5 +1,5 @@
 #define BLOCO_SIZE 4096         // tamanho do bloco em bytes
-#define NUMBER_OF_BUCKETS 5     // número de buckets na tabela hash
+#define NUMBER_OF_BUCKETS 255361     // número de buckets na tabela hash
 #define NUMBER_OF_REGISTROS 2   // número de registros por bloco
 
 struct registro_t {
@@ -14,13 +14,14 @@ struct registro_t {
 
 struct bloco_t {
     registro_t registros[NUMBER_OF_REGISTROS];
-    int num_registros_atualmente = 0;
-    unsigned char ocupa[BLOCO_SIZE - (sizeof(registro_t) * NUMBER_OF_REGISTROS) - sizeof(int)];
+    unsigned char ocupa[BLOCO_SIZE - (sizeof(registro_t) * NUMBER_OF_REGISTROS)];
 };
 
 struct bucket_t {
-    int endereco_bloco1; // endereço do bloco 1 na memória secundária
-    int endereco_bloco2; // endereço do bloco 2 na memória secundária
+    int endereco_bloco1;            // endereço do bloco 1 na memória secundária
+    int num_registros_atualmente1;  // número de registros atualmente no bloco 1
+    int endereco_bloco2;            // endereço do bloco 2 na memória secundária
+    int num_registros_atualmente2;  // número de registros atualmente no bloco 2
 };
 
 typedef bucket_t** tabela_hash_t;
