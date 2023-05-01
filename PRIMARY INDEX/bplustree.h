@@ -6,7 +6,7 @@
 
 using namespace std;
 
-int MAX = 4; // Tamanho de cada nó
+int MAX = 6; // Tamanho de cada nó
 
 class BPTree; // ÁRVORE B+
 
@@ -39,6 +39,7 @@ class BPTree{
 		void insert(int);
 		void display(Node*);
 		Node* getRoot();
+        void leaf(Node*);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -289,6 +290,26 @@ void BPTree::display(Node* cursor){
 	if(cursor!=NULL){
 		for(int i = 0; i < cursor->size; i++){
 			cout<<cursor->key[i]<<" ";
+		}
+		cout<<"\n";
+		if(cursor->is_leaf != true){
+			for(int i = 0; i < cursor->size+1; i++){
+				display(cursor->ptr[i]);
+			}
+		}
+	}
+} // end
+
+// BPTREE: DISPLAY
+void BPTree::leaf(Node* cursor){
+	//depth first display
+	//depth first display
+	if(cursor!=NULL){
+        
+		for(int i = 0; i < cursor->size; i++){
+            if(cursor->is_leaf == true){
+                cout<<cursor->key[i]<<" ";
+            }
 		}
 		cout<<"\n";
 		if(cursor->is_leaf != true){
