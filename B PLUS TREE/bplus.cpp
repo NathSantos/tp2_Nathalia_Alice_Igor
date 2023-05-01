@@ -32,7 +32,6 @@ class BPTree{
 	// Atributos
 	Node *root;
 	void insertInternal(int,Node*,Node*);
-	void removeInternal(int,Node*,Node*);
 	Node* findParent(Node*,Node*);
 	
 	// Métodos
@@ -40,11 +39,8 @@ class BPTree{
 		BPTree();
 		void search(int);
 		void insert(int);
-		void remove(int);
 		void display(Node*);
 		Node* getRoot();
-		void cleanUp(Node*);
-		~BPTree();
 };
 
 //============================================================================================================//
@@ -63,8 +59,7 @@ BPTree::BPTree(){
 //============================================================================================================//
 
 // BPTREE: BUSCA DE CHAVE NA ÁRVORE
-void BPTree::search(int x)
-{
+void BPTree::search(int x){
 	if (root==NULL){ // Se árvore estiver vazia
 		cout << "Tree empty\n";
 	} else {
@@ -207,8 +202,7 @@ void BPTree::insert(int x){
 //============================================================================================================//
 
 // BPTREE: INSERÇÃO NO NÓ INTERNO NA ÁRVORE
-void BPTree::insertInternal(int x, Node* cursor, Node* child)
-{
+void BPTree::insertInternal(int x, Node* cursor, Node* child){
 	if(cursor->size < MAX)
 	{
 		//if cursor is not full
@@ -275,9 +269,7 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child)
 			newInternal->ptr[i] = virtualPtr[j];
 		}
 		// m = cursor->key[cursor->size]
-		if(cursor == root)
-		{
-			//if cursor is a root node, we create a new root
+		if(cursor == root){
 			Node* newRoot = new Node;
 			newRoot->key[0] = cursor->key[cursor->size];
 			newRoot->ptr[0] = cursor;
@@ -286,11 +278,7 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child)
 			newRoot->size = 1;
 			root = newRoot;
 			cout<<"Created new root\n";
-		}
-		else
-		{
-			//recursion
-			//find depth first search to find parent of cursor
+		} else {
 			insertInternal(cursor->key[cursor->size] ,findParent(root,cursor) ,newInternal);
 		}
 	}
@@ -298,8 +286,8 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child)
 
 //============================================================================================================//
 
-Node* BPTree::findParent(Node* cursor, Node* child)
-{
+// BPTREE: PROCURA PAI
+Node* BPTree::findParent(Node* cursor, Node* child){
 	//finds parent using depth first traversal and ignores leaf nodes as they cannot be parents
 	//also ignores second last level because we will never find parent of a leaf node during insertion using this function
 	Node* parent;
@@ -325,12 +313,8 @@ Node* BPTree::findParent(Node* cursor, Node* child)
 
 //============================================================================================================//
 
-//============================================================================================================//
-
-//============================================================================================================//
-
-void BPTree::display(Node* cursor)
-{
+// BPTREE: DISPLAY PAI
+void BPTree::display(Node* cursor){
 	//depth first display
 	if(cursor!=NULL)
 	{
@@ -351,44 +335,16 @@ void BPTree::display(Node* cursor)
 
 //============================================================================================================//
 
-Node* BPTree::getRoot()
-{
+// BPTREE: GET RAIZ DA ÁRVORE
+Node* BPTree::getRoot(){
 	return root;
-}
-void BPTree::cleanUp(Node* cursor)
-{
-	//clean up logic
-	if(cursor!=NULL)
-	{
-		if(cursor->is_leaf != true)
-		{
-			for(int i = 0; i < cursor->size+1; i++)
-			{
-				cleanUp(cursor->ptr[i]);
-			}
-		}
-		for(int i = 0; i < cursor->size; i++)
-		{
-			cout<<"Deleted key from memory: "<<cursor->key[i]<<"\n";
-		}
-		delete[] cursor->key;
-		delete[] cursor->ptr;
-		delete cursor;
-	}
-}
-BPTree::~BPTree()
-{
-	//calling cleanUp routine
-	cleanUp(root);
 }
 
 //============================================================================================================//
 
-//give command line argument to load a tree from log
-//to create a fresh tree, do not give any command line argument
 int main(int argc, char* argv[])
 {
-	BPTree bpt;//B+ tree object that carries out all the operations
+	BPTree bpt;
 	string command;
 	int x;
 	bool close = false;
@@ -444,8 +400,6 @@ int main(int argc, char* argv[])
 	cout<<"Commands:\nsearch <value> to search\n";
 	cout<<"insert <value> to insert\n";
 	cout<<"display to display\n";
-	cout<<"save to save log\n";
-	cout<<"exit to exit\n";
 	do
 	{
 		cout<<"Enter command: ";
@@ -467,22 +421,6 @@ int main(int argc, char* argv[])
 		else if(!command.compare("display"))
 		{
 			bpt.display(bpt.getRoot());
-		}
-		else if(!command.compare("save"))
-		{
-			cout<<"Enter file name: ";
-			string filename;
-			cin>>filename;
-			fout.open(filename);
-			fout<<logBuffer;
-			fout.close();
-			cout<<"Saved successfully into file: \""<<filename<<"\"\n";
-			cin.clear();
-			cin.ignore(1);
-		}
-		else if(!command.compare("exit"))
-		{
-			close = true;
 		}
 		else
 		{
