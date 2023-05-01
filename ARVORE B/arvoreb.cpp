@@ -3,82 +3,65 @@
 //////////////////////////////////////////
 
 //======================================//
-// C++ program for B-Tree insertion
-#include<iostream>
+#include <iostream>
+
 using namespace std;
 
-// A BTree node
-class BTreeNode
-{
-	int *keys; // An array of keys
-	int t;	 // Minimum degree (defines the range for number of keys)
-	BTreeNode **C; // An array of child pointers
-	int n;	 // Current number of keys
-	bool leaf; // Is true when node is leaf. Otherwise false
-public:
-	BTreeNode(int _t, bool _leaf); // Constructor
+//============================================================================================//
 
-	// A utility function to insert a new key in the subtree rooted with
-	// this node. The assumption is, the node must be non-full when this
-	// function is called
-	void insertNonFull(int k);
+// NÓ DA ÁRVORE B
+class BTreeNode{
 
-	// A utility function to split the child y of this node. i is index of y in
-	// child array C[]. The Child y must be full when this function is called
-	void splitChild(int i, BTreeNode *y);
+	private:
+		int *keys; // Vetor de chaves do nó
+		int t;	 // Grau mínimo
+		BTreeNode **children; // Vetor com ponteiro para os filhos
+		int n;	 // Número atual de chaves
+		bool leaf; // Se true, é folha
 
-	// A function to traverse all nodes in a subtree rooted with this node
-	void traverse();
+	public:
+		BTreeNode(int _t, bool _leaf); // Construtor
+		void insertNonFull(int k); // Insere chave se não estiver vazio
+		void splitChild(int i, BTreeNode *y); // Divide nó quando cheio
+		void traverse(); // Transversa os nós 
+		BTreeNode *search(int k); // Procura chave no nó, retorna NULL caso não encontre
 
-	// A function to search a key in the subtree rooted with this node.
-	BTreeNode *search(int k); // returns NULL if k is not present.
-
-// Make BTree friend of this so that we can access private members of this
-// class in BTree functions
-friend class BTree;
+	friend class BTree; // Faz a classe acessar membros privados de outra classe
 };
 
-// A BTree
-class BTree
-{
-	BTreeNode *root; // Pointer to root node
-	int t; // Minimum degree
-public:
-	// Constructor (Initializes tree as empty)
-	BTree(int _t)
-	{ root = NULL; t = _t; }
+// ÁRVORE B
+class BTree{
 
-	// function to traverse the tree
-	void traverse()
-	{ if (root != NULL) root->traverse(); }
+	private:
+		BTreeNode *root; // Ponteiro para raiz
+		int t; // Grau mínimo
 
-	// function to search a key in this tree
-	BTreeNode* search(int k)
-	{ return (root == NULL)? NULL : root->search(k); }
-
-	// The main function that inserts a new key in this B-Tree
-	void insert(int k);
+	public:
+		BTree(int _t) {root = NULL; t = _t;} // Construtor (inicia como vazio)
+		void traverse() {if (root != NULL) root->traverse();} // Transversa a árvore
+		BTreeNode* search(int k) {return (root == NULL)? NULL : root->search(k);} // Procura chave na árvore
+		void insert(int k); // Insere chave na árvore
 };
 
-// Constructor for BTreeNode class
-BTreeNode::BTreeNode(int t1, bool leaf1)
-{
-	// Copy the given minimum degree and leaf property
+//============================================================================================//
+
+// CONSTRUTOR DO NÓ DA ÁRVORE
+BTreeNode::BTreeNode(int t1, bool leaf1){
+
+	// Copia o Grau mínimo e a propriedade da folha
 	t = t1;
 	leaf = leaf1;
 
-	// Allocate memory for maximum number of possible keys
-	// and child pointers
+	// Aloca memória para Chaves e Filhos
 	keys = new int[2*t-1];
-	C = new BTreeNode *[2*t];
+	children = new BTreeNode *[2*t];
 
-	// Initialize the number of keys as 0
+	// Inicializa número de chaves como 0
 	n = 0;
 }
 
-// Function to traverse all nodes in a subtree rooted with this node
-void BTreeNode::traverse()
-{
+// TRANSVERSA OS NÓS
+void BTreeNode::traverse(){
 	// There are n keys and n+1 children, traverse through n keys
 	// and first n children
 	int i;
@@ -96,7 +79,7 @@ void BTreeNode::traverse()
 		C[i]->traverse();
 }
 
-// Function to search key k in subtree rooted with this node
+// Procura chave no nó, retorna NULL caso não encontre
 BTreeNode *BTreeNode::search(int k)
 {
 	// Find the first key greater than or equal to k
@@ -116,7 +99,7 @@ BTreeNode *BTreeNode::search(int k)
 	return C[i]->search(k);
 }
 
-// The main function that inserts a new key in this B-Tree
+// Insere chave na árvore
 void BTree::insert(int k)
 {
 	// If tree is empty
