@@ -1,228 +1,120 @@
-//Author: Shashikant Kadam
-//Roll number 16CSE1026
-/*****B+ Tree*****/
 #include<iostream>
 #include<string>
 #include<sstream>
 #include<fstream>
 #include<climits>
+
 using namespace std;
-int MAX; //size of each node
-class BPTree; //self explanatory classes
-class Node
-{
-	bool IS_LEAF;
+
+int MAX; // Tamanho de cada nó
+
+//============================================================================================================//
+
+class BPTree; // ÁRVORE B+
+
+// NÓ DA ÁRVORE B+
+class Node{
+
+	// Atributos
+	bool is_leaf;
 	int *key, size;
 	Node** ptr;
 	friend class BPTree;
-public:
-	Node();
+
+	// Métodos
+	public: 
+		Node();
 };
-class BPTree
-{
+
+// ÁRVORE B+
+class BPTree{
+
+	// Atributos
 	Node *root;
 	void insertInternal(int,Node*,Node*);
 	void removeInternal(int,Node*,Node*);
 	Node* findParent(Node*,Node*);
-public:
-	BPTree();
-	void search(int);
-	void insert(int);
-	void remove(int);
-	void display(Node*);
-	Node* getRoot();
-	void cleanUp(Node*);
-	~BPTree();
+	
+	// Métodos
+	public:
+		BPTree();
+		void search(int);
+		void insert(int);
+		void remove(int);
+		void display(Node*);
+		Node* getRoot();
+		void cleanUp(Node*);
+		~BPTree();
 };
-//give command line argument to load a tree from log
-//to create a fresh tree, do not give any command line argument
-int main(int argc, char* argv[])
-{
-	BPTree bpt;//B+ tree object that carries out all the operations
-	string command;
-	int x;
-	bool close = false;
-	string logBuffer;//used to save into log
-	ifstream fin;
-	ofstream fout;
-	//create tree from log file from command line input
-	if(argc > 1)
-	{
-		fin.open(argv[1]);//open file
-		if(!fin.is_open())
-		{
-			cout<<"File not found\n";
-			return 0;
-		}
-		int i = 1;
-		getline(fin, logBuffer, '\0');//copy log from file to logBuffer for saving purpose
-		fin.close();
-		fin.open(argv[1]);//reopening file
-		getline(fin,command);
-		stringstream max(command);//first line of log contains the max degree
-		max>>MAX;
-		while(getline(fin,command))//iterating over every line ie command
-		{
-			if(!command.substr(0,6).compare("insert"))
-			{
-				stringstream argument(command.substr(7));
-				argument>>x;
-				bpt.insert(x);
-			}
-			else if(!command.substr(0,6).compare("delete"))
-			{
-				stringstream argument(command.substr(7));
-				argument>>x;
-				bpt.remove(x);
-			}
-			else
-			{
-				cout<<"Unknown command: "<<command<<" at line #"<<i<<"\n";
-				return 0;
-			}
-			i++;
-		}
-		cout<<"Tree loaded successfully from: \""<<argv[1]<<"\"\n";
-		fin.close();
-	}
-	else//create fresh tree
-	{
-		cout<<"Enter the max degree\n";
-		cin>>command;
-		stringstream max(command);
-		max>>MAX;
-		logBuffer.append(command);
-		logBuffer.append("\n");
-		cin.clear();
-		cin.ignore(1);
-	}
-	//command line menu
-	cout<<"Commands:\nsearch <value> to search\n";
-	cout<<"insert <value> to insert\n";
-	cout<<"delete <value> to delete\n";
-	cout<<"display to display\n";
-	cout<<"save to save log\n";
-	cout<<"exit to exit\n";
-	do
-	{
-		cout<<"Enter command: ";
-		getline(cin,command);
-		if(!command.substr(0,6).compare("search"))
-		{
-			stringstream argument(command.substr(7));
-			argument>>x;
-			bpt.search(x);
-		}
-		else if(!command.substr(0,6).compare("insert"))
-		{
-			stringstream argument(command.substr(7));
-			argument>>x;
-			bpt.insert(x);
-			logBuffer.append(command);
-			logBuffer.append("\n");
-		}
-		else if(!command.substr(0,6).compare("delete"))
-		{
-			stringstream argument(command.substr(7));
-			argument>>x;
-			bpt.remove(x);
-			logBuffer.append(command);
-			logBuffer.append("\n");
-		}
-		else if(!command.compare("display"))
-		{
-			bpt.display(bpt.getRoot());
-		}
-		else if(!command.compare("save"))
-		{
-			cout<<"Enter file name: ";
-			string filename;
-			cin>>filename;
-			fout.open(filename);
-			fout<<logBuffer;
-			fout.close();
-			cout<<"Saved successfully into file: \""<<filename<<"\"\n";
-			cin.clear();
-			cin.ignore(1);
-		}
-		else if(!command.compare("exit"))
-		{
-			close = true;
-		}
-		else
-		{
-			cout<<"Invalid command\n";
-		}
-	}while(!close);
-	return 0;
-}
-Node::Node()
-{
+
+//============================================================================================================//
+
+// MÉTODOS CONSTRUTOR DO NÓ
+Node::Node(){
 	//dynamic memory allocation
 	key = new int[MAX];
 	ptr = new Node*[MAX+1];
 }
-BPTree::BPTree()
-{
+
+// MÉTODOS CONSTRUTOR DA ÁRVORE B+
+BPTree::BPTree(){
 	root = NULL;
 }
+
+//============================================================================================================//
+
+// BPTREE: BUSCA DE CHAVE NA ÁRVORE
 void BPTree::search(int x)
 {
-	//search logic
-	if(root==NULL)
-	{
-		//empty
-		cout<<"Tree empty\n";
-	}
-	else
-	{
-		Node* cursor = root;
-		//in the following while loop, cursor will travel to the leaf node possibly consisting the key
-		while(cursor->IS_LEAF == false)
-		{
-			for(int i = 0; i < cursor->size; i++)
-			{
-				if(x < cursor->key[i])
-				{
-					cursor = cursor->ptr[i];
+	// Verifica se árvore está vazia ou não
+	if (root==NULL){
+		cout << "Tree empty\n";
+	} else {
+		Node* cursor = root; // define cursor para raiz da árvore
+		
+		// Cursor procura nó folha na árvore (que pode conter chave ou não)
+		while(cursor->is_leaf == false){
+			for(int i = 0; i < cursor->size; i++){
+				if(x < cursor->key[i]){ // se o valor buscado for menor que a chave verificada
+					cursor = cursor->ptr[i]; // atualiza cursor
 					break;
-				}
-				if(i == cursor->size - 1)
-				{
-					cursor = cursor->ptr[i+1];
+				} // end if
+				if(i == cursor->size - 1){ // se chegar ao final do cursor
+					cursor = cursor->ptr[i+1]; // atualiza cursor
 					break;
-				}
-			}
-		}
-		//in the following for loop, we search for the key if it exists
-		for(int i = 0; i < cursor->size; i++)
-		{
-			if(cursor->key[i] == x)
-			{
-				cout<<"Found\n";
+				} // end if
+			} // end for
+		} // end while
+
+		// Procura chave para ver se existe na folha
+		for(int i = 0; i < cursor->size; i++){
+			if(cursor->key[i] == x){
+				cout << "Found\n"; // chave encontrada
 				return;
-			}
-		}
-		cout<<"Not found\n";
-	}
-}
-void BPTree::insert(int x)
-{
+			} // end if
+		} // end for
+
+		cout<<"Not found\n"; // chave não existe
+	} // end if/else
+
+} // end
+
+//============================================================================================================//
+
+// BPTREE: INSERÇÃO DE CHAVE NA ÁRVORE
+void BPTree::insert(int x){
 	//insert logic
-	if(root==NULL)
-	{
+	if (root==NULL){
 		root = new Node;
 		root->key[0] = x;
-		root->IS_LEAF = true;
+		root->is_leaf = true;
 		root->size = 1;
-		cout<<"Created root\nInserted "<<x<<" successfully\n";
-	}
-	else
-	{
+		cout << "Created root\nInserted " << x << " successfully\n";
+	} else {
 		Node* cursor = root;
 		Node* parent;
 		//in the following while loop, cursor will travel to the leaf node possibly consisting the key
-		while(cursor->IS_LEAF == false)
+		while(cursor->is_leaf == false)
 		{
 			parent = cursor;
 			for(int i = 0; i < cursor->size; i++)
@@ -278,7 +170,7 @@ void BPTree::insert(int x)
 				virtualNode[j] = virtualNode[j-1];
 			}
 			virtualNode[i] = x; 
-			newLeaf->IS_LEAF = true;
+			newLeaf->is_leaf = true;
 			//split the cursor into two leaf nodes
 			cursor->size = (MAX+1)/2;
 			newLeaf->size = MAX+1-(MAX+1)/2;
@@ -304,7 +196,7 @@ void BPTree::insert(int x)
 				newRoot->key[0] = newLeaf->key[0];
 				newRoot->ptr[0] = cursor;
 				newRoot->ptr[1] = newLeaf;
-				newRoot->IS_LEAF = false;
+				newRoot->is_leaf = false;
 				newRoot->size = 1;
 				root = newRoot;
 				cout<<"Created new root\n";
@@ -316,7 +208,10 @@ void BPTree::insert(int x)
 			}
 		}
 	}
-}
+} // end
+
+//============================================================================================================//
+
 void BPTree::insertInternal(int x, Node* cursor, Node* child)
 {
 	if(cursor->size < MAX)
@@ -371,7 +266,7 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child)
 			virtualPtr[j] = virtualPtr[j-1];
 		}
 		virtualPtr[i+1] = child; 
-		newInternal->IS_LEAF = false;
+		newInternal->is_leaf = false;
 		//split cursor into two nodes
 		cursor->size = (MAX+1)/2;
 		newInternal->size = MAX-(MAX+1)/2;
@@ -392,7 +287,7 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child)
 			newRoot->key[0] = cursor->key[cursor->size];
 			newRoot->ptr[0] = cursor;
 			newRoot->ptr[1] = newInternal;
-			newRoot->IS_LEAF = false;
+			newRoot->is_leaf = false;
 			newRoot->size = 1;
 			root = newRoot;
 			cout<<"Created new root\n";
@@ -405,12 +300,15 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child)
 		}
 	}
 }
+
+//============================================================================================================//
+
 Node* BPTree::findParent(Node* cursor, Node* child)
 {
 	//finds parent using depth first traversal and ignores leaf nodes as they cannot be parents
 	//also ignores second last level because we will never find parent of a leaf node during insertion using this function
 	Node* parent;
-	if(cursor->IS_LEAF || (cursor->ptr[0])->IS_LEAF)
+	if(cursor->is_leaf || (cursor->ptr[0])->is_leaf)
 	{
 		return NULL;
 	}
@@ -429,6 +327,9 @@ Node* BPTree::findParent(Node* cursor, Node* child)
 	}
 	return parent;
 }
+
+//============================================================================================================//
+
 void BPTree::remove(int x)
 {
 	//delete logic
@@ -442,7 +343,7 @@ void BPTree::remove(int x)
 		Node* parent;
 		int leftSibling, rightSibling;
 		//in the following while loop, cursor will will travel to the leaf node possibly consisting the key
-		while(cursor->IS_LEAF == false)
+		while(cursor->is_leaf == false)
 		{
 			for(int i = 0; i < cursor->size; i++)
 			{
@@ -604,6 +505,9 @@ void BPTree::remove(int x)
 		}
 	}
 }
+
+//============================================================================================================//
+
 void BPTree::removeInternal(int x, Node* cursor, Node* child)
 {
 	//deleting the key x first
@@ -781,6 +685,9 @@ void BPTree::removeInternal(int x, Node* cursor, Node* child)
 		cout<<"Merged with right sibling\n";
 	}
 }
+
+//============================================================================================================//
+
 void BPTree::display(Node* cursor)
 {
 	//depth first display
@@ -791,7 +698,7 @@ void BPTree::display(Node* cursor)
 			cout<<cursor->key[i]<<" ";
 		}
 		cout<<"\n";
-		if(cursor->IS_LEAF != true)
+		if(cursor->is_leaf != true)
 		{
 			for(int i = 0; i < cursor->size+1; i++)
 			{
@@ -800,6 +707,9 @@ void BPTree::display(Node* cursor)
 		}
 	}
 }
+
+//============================================================================================================//
+
 Node* BPTree::getRoot()
 {
 	return root;
@@ -809,7 +719,7 @@ void BPTree::cleanUp(Node* cursor)
 	//clean up logic
 	if(cursor!=NULL)
 	{
-		if(cursor->IS_LEAF != true)
+		if(cursor->is_leaf != true)
 		{
 			for(int i = 0; i < cursor->size+1; i++)
 			{
@@ -830,3 +740,130 @@ BPTree::~BPTree()
 	//calling cleanUp routine
 	cleanUp(root);
 }
+
+//============================================================================================================//
+
+//give command line argument to load a tree from log
+//to create a fresh tree, do not give any command line argument
+int main(int argc, char* argv[])
+{
+	BPTree bpt;//B+ tree object that carries out all the operations
+	string command;
+	int x;
+	bool close = false;
+	string logBuffer;//used to save into log
+	ifstream fin;
+	ofstream fout;
+	//create tree from log file from command line input
+	if(argc > 1)
+	{
+		fin.open(argv[1]);//open file
+		if(!fin.is_open())
+		{
+			cout<<"File not found\n";
+			return 0;
+		}
+		int i = 1;
+		getline(fin, logBuffer, '\0');//copy log from file to logBuffer for saving purpose
+		fin.close();
+		fin.open(argv[1]);//reopening file
+		getline(fin,command);
+		stringstream max(command);//first line of log contains the max degree
+		max>>MAX;
+		while(getline(fin,command))//iterating over every line ie command
+		{
+			if(!command.substr(0,6).compare("insert"))
+			{
+				stringstream argument(command.substr(7));
+				argument>>x;
+				bpt.insert(x);
+			}
+			else if(!command.substr(0,6).compare("delete"))
+			{
+				stringstream argument(command.substr(7));
+				argument>>x;
+				bpt.remove(x);
+			}
+			else
+			{
+				cout<<"Unknown command: "<<command<<" at line #"<<i<<"\n";
+				return 0;
+			}
+			i++;
+		}
+		cout<<"Tree loaded successfully from: \""<<argv[1]<<"\"\n";
+		fin.close();
+	}
+	else//create fresh tree
+	{
+		cout<<"Enter the max degree\n";
+		cin>>command;
+		stringstream max(command);
+		max>>MAX;
+		logBuffer.append(command);
+		logBuffer.append("\n");
+		cin.clear();
+		cin.ignore(1);
+	}
+	//command line menu
+	cout<<"Commands:\nsearch <value> to search\n";
+	cout<<"insert <value> to insert\n";
+	cout<<"delete <value> to delete\n";
+	cout<<"display to display\n";
+	cout<<"save to save log\n";
+	cout<<"exit to exit\n";
+	do
+	{
+		cout<<"Enter command: ";
+		getline(cin,command);
+		if(!command.substr(0,6).compare("search"))
+		{
+			stringstream argument(command.substr(7));
+			argument>>x;
+			bpt.search(x);
+		}
+		else if(!command.substr(0,6).compare("insert"))
+		{
+			stringstream argument(command.substr(7));
+			argument>>x;
+			bpt.insert(x);
+			logBuffer.append(command);
+			logBuffer.append("\n");
+		}
+		else if(!command.substr(0,6).compare("delete"))
+		{
+			stringstream argument(command.substr(7));
+			argument>>x;
+			bpt.remove(x);
+			logBuffer.append(command);
+			logBuffer.append("\n");
+		}
+		else if(!command.compare("display"))
+		{
+			bpt.display(bpt.getRoot());
+		}
+		else if(!command.compare("save"))
+		{
+			cout<<"Enter file name: ";
+			string filename;
+			cin>>filename;
+			fout.open(filename);
+			fout<<logBuffer;
+			fout.close();
+			cout<<"Saved successfully into file: \""<<filename<<"\"\n";
+			cin.clear();
+			cin.ignore(1);
+		}
+		else if(!command.compare("exit"))
+		{
+			close = true;
+		}
+		else
+		{
+			cout<<"Invalid command\n";
+		}
+	}while(!close);
+	return 0;
+}
+
+//============================================================================================================//
