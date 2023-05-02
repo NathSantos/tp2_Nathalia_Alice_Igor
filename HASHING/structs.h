@@ -1,5 +1,5 @@
 #define BLOCO_SIZE 4096         // tamanho do bloco em bytes
-#define NUMBER_OF_BUCKETS 1500     // número de buckets na tabela hash
+#define NUMBER_OF_BUCKETS 255360     // número de buckets na tabela hash
 #define NUMBER_OF_REGISTROS 2   // número de registros por bloco
 
 struct registro_t {
