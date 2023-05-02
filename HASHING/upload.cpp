@@ -19,25 +19,29 @@ int funcaoHash(int id) {
 tabela_hash_t tabela_hash_criar(fstream &arquivo_binario) {
     tabela_hash_t tabela = new bucket_t*[NUMBER_OF_BUCKETS];
     arquivo_binario.seekg(0, ios::beg);
+    ofstream output("files/criacao_hash.txt"); // cria o arquivo txt de saída
     for(int i=0; i<NUMBER_OF_BUCKETS; i++) {
         tabela[i] = new bucket_t;
         tabela[i]->endereco_bloco1 = arquivo_binario.tellg();    // Aponta para a posição atual
         tabela[i]->num_registros_atualmente1 = 0;                // Inicializa o número de registros do bloco 1
-        cout << "Endereço do bloco 1 do bucket " << i << ": " << tabela[i]->endereco_bloco1 << endl;
+        output << "Endereço do bloco 1 do bucket " << i << ": " << tabela[i]->endereco_bloco1 << endl;
         arquivo_binario.seekg(BLOCO_SIZE, ios::cur);                          
         tabela[i]->endereco_bloco2 = arquivo_binario.tellg();    // Aponta para o próximo bloco
         tabela[i]->num_registros_atualmente2 = 0;                // Inicializa o número de registros do bloco 2
-        cout << "Endereço do bloco 2 do bucket " << i << ": " << tabela[i]->endereco_bloco2 << endl;
+        output << "Endereço do bloco 2 do bucket " << i << ": " << tabela[i]->endereco_bloco2 << endl;
         arquivo_binario.seekg(BLOCO_SIZE, ios::cur);
     }
+    output.close();
     return tabela;
 }
 
-void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquivo_binario) {
+
+
+void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquivo_binario, ofstream &output) {
     int posicao = funcaoHash(registro->id);
-    ofstream output("analise.txt"); // cria o arquivo txt de saída
     bucket_t *bucket = tabela[posicao];
     output << "\nRegistro " << registro->id << " mapeado para o bucket " << posicao << endl;
+    cout << "\nRegistro " << registro->id << " mapeado para o bucket " << posicao << endl;
 
     // Se o bloco 1 não estiver cheio, insere no bloco 1
     if(bucket->num_registros_atualmente1 < NUMBER_OF_REGISTROS) {
@@ -69,7 +73,7 @@ void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquiv
             free(bloco1);
 
             //cout << "Registro " << registro->id << " inserido no bloco 1 do bucket " << posicao << " na posição 0 do vetor" << endl;
-
+            
             return; 
         // Se o bloco 1 não estiver vazio, insere no segundo registro
         } else {
@@ -109,7 +113,7 @@ void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquiv
             free(bloco1);
 
             //cout << "Registro " << registro->id << " inserido no bloco 1 do bucket " << posicao << " na posição 1 do vetor" << endl;
-
+            
             return;
         }
         free(bloco1);
@@ -145,7 +149,7 @@ void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquiv
             free(bloco2);
 
             //cout << "Registro " << registro->id << " inserido no bloco 2 do bucket " << posicao << " na posição 0 do vetor" << endl;
-
+            
             return;
         // Se o bloco 2 não estiver vazio, insere no segundo registro
         } else {
@@ -185,13 +189,15 @@ void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquiv
             free(bloco2);
 
             //cout << "Registro " << registro->id << " inserido no bloco 2 do bucket " << posicao << " na posição 1 do vetor" << endl;
-
+            
             return;
         }
         free(bloco2);
     }
     
     output << "Não foi possível alocar em nenhum dos blocos do bucket " << posicao << endl;
+    cout << "Não foi possível alocar em nenhum dos blocos do bucket " << posicao << endl;
+    
 }
 
 // Função que libera a memória alocada para a tabela hash
@@ -204,7 +210,7 @@ void libera_tabela(tabela_hash_t tabela) {
 
 void ler_arquivo_binario() {
     ifstream arquivo("arquivo_dados.bin", ios::in | ios::binary);
-    ofstream output("output.txt"); // cria o arquivo txt de saída
+    ofstream output("files/output.txt"); // cria o arquivo txt de saída
 
     if (!arquivo) {
         cerr << "Erro ao abrir o arquivo!" << endl;
@@ -214,18 +220,23 @@ void ler_arquivo_binario() {
     int bloco_size = sizeof(bloco_t);   
 
     arquivo.seekg(0, ios::end);
-    int tamanho_arquivo = arquivo.tellg();
+    output << "Tamanho do arquivo: " << arquivo.tellg() << endl;
+    int64_t tamanho_arquivo = arquivo.tellg();
     arquivo.seekg(0);
 
     output << "Tamanho do arquivo: " << tamanho_arquivo << endl;
     output << "\n" << endl;
 
     int num_blocos = tamanho_arquivo / bloco_size;
+    output << "num_blocos: " << num_blocos << endl;
+    output << "bloco_size: " << bloco_size << endl;
+    output << "\n" << endl;
     for (int i = 0; i < num_blocos; i++) {
         bloco_t bloco_lido;
         arquivo.read((char*)&bloco_lido, bloco_size);
         arquivo.clear();
         output << "============ BLOCO " << i << " ============" << endl;
+        cout << "============ BLOCO " << i << " ============" << endl;
         for (int j = 0; j < NUMBER_OF_REGISTROS; j++) {
             output << "ID: " << bloco_lido.registros[j].id << endl;
             output << "TITULO: " << bloco_lido.registros[j].titulo << endl;
@@ -278,6 +289,7 @@ int main(int argc, char *argv[]) {
     ifstream arq(argv[1]);                                      // abre o arquivo de entrada passado como argumento
     fstream file("arquivo_dados.bin", ios::out | ios::binary);  // abre o arquivo binário para escrita em disco
     string linha;
+    ofstream output("files/mapeamento.txt"); // cria o arquivo txt de saída
 
     // Cria a tabela hash
     tabela_hash_t tabela = tabela_hash_criar(file);
@@ -412,12 +424,13 @@ int main(int argc, char *argv[]) {
         // ---------------------------------------------------        
 
         // Insere os registro nos blocos
-        insere_registro(registro, tabela, file);
+        insere_registro(registro, tabela, file, output);
 
         delete registro;    // desaloca o registro
     }
 
     file.close();
+    output.close();
 
     // Libera a memória alocada para a tabela hash
     libera_tabela(tabela);
