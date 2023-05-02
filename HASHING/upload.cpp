@@ -10,16 +10,16 @@ using namespace std;
 // ==============================    FUNÇÕES HASH    =============================
 // ===============================================================================
 
-// Função que calcula o hash de um registro com base no ID e retorna o número do bucket correspondente
-int funcaoHash(int id) {
-    return id % NUMBER_OF_BUCKETS;
+// Função que calcula o hash de um registro com base no contador de registros e retorna o número do bucket correspondente
+int funcaoHash(int contador) {
+    return contador % NUMBER_OF_BUCKETS;
 }
 
 // Função que cria a tabela hash
 tabela_hash_t tabela_hash_criar(fstream &arquivo_binario) {
     tabela_hash_t tabela = new bucket_t*[NUMBER_OF_BUCKETS];
     arquivo_binario.seekg(0, ios::beg);
-    ofstream output("files/criacao_hash.txt"); // cria o arquivo txt de saída
+    ofstream output("criacao_hash.txt"); // cria o arquivo txt de saída
     for(int i=0; i<NUMBER_OF_BUCKETS; i++) {
         tabela[i] = new bucket_t;
         tabela[i]->endereco_bloco1 = arquivo_binario.tellg();    // Aponta para a posição atual
@@ -37,8 +37,8 @@ tabela_hash_t tabela_hash_criar(fstream &arquivo_binario) {
 
 
 
-void insere_registro(registro_t *registro, tabela_hash_t tabela, fstream &arquivo_binario, ofstream &output) {
-    int posicao = funcaoHash(registro->id);
+void insere_registro(int contador, registro_t *registro, tabela_hash_t tabela, fstream &arquivo_binario, ofstream &output) {
+    int posicao = funcaoHash(contador);
     bucket_t *bucket = tabela[posicao];
     output << "\nRegistro " << registro->id << " mapeado para o bucket " << posicao << endl;
     cout << "\nRegistro " << registro->id << " mapeado para o bucket " << posicao << endl;
@@ -210,7 +210,7 @@ void libera_tabela(tabela_hash_t tabela) {
 
 void ler_arquivo_binario() {
     ifstream arquivo("arquivo_dados.bin", ios::in | ios::binary);
-    ofstream output("files/output.txt"); // cria o arquivo txt de saída
+    ofstream output("output.txt"); // cria o arquivo txt de saída
 
     if (!arquivo) {
         cerr << "Erro ao abrir o arquivo!" << endl;
@@ -236,7 +236,6 @@ void ler_arquivo_binario() {
         arquivo.read((char*)&bloco_lido, bloco_size);
         arquivo.clear();
         output << "============ BLOCO " << i << " ============" << endl;
-        cout << "============ BLOCO " << i << " ============" << endl;
         for (int j = 0; j < NUMBER_OF_REGISTROS; j++) {
             output << "ID: " << bloco_lido.registros[j].id << endl;
             output << "TITULO: " << bloco_lido.registros[j].titulo << endl;
@@ -289,11 +288,12 @@ int main(int argc, char *argv[]) {
     ifstream arq(argv[1]);                                      // abre o arquivo de entrada passado como argumento
     fstream file("arquivo_dados.bin", ios::out | ios::binary);  // abre o arquivo binário para escrita em disco
     string linha;
-    ofstream output("files/mapeamento.txt"); // cria o arquivo txt de saída
+    ofstream output("mapeamento.txt"); // cria o arquivo txt de saída
 
     // Cria a tabela hash
     tabela_hash_t tabela = tabela_hash_criar(file);
 
+    int contador = 1;
     while (getline(arq, linha)) {
         registro_t *registro = new registro_t();    // cria um novo registro
         stringstream ss(linha);                     // cria um stringstream para ler cada campo da linha
@@ -424,11 +424,11 @@ int main(int argc, char *argv[]) {
         // ---------------------------------------------------        
 
         // Insere os registro nos blocos
-        insere_registro(registro, tabela, file, output);
-
+        insere_registro(contador, registro, tabela, file, output);
+        contador++;
         delete registro;    // desaloca o registro
     }
-
+    cout << "======= Contador: " << contador << endl;
     file.close();
     output.close();
 
