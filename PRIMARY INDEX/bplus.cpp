@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
             cout << (leaves[i]).key[j] << " ";
         }
         (leaves[i]).next = &leaves[i+1];
-        cout << "-- "<< leaves[i].next;
+        cout << "--> "<< leaves[i].next;
         cout << "\n";
     }
 
