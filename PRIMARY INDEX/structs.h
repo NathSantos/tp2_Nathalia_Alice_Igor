@@ -1,5 +1,5 @@
 #define BLOCO_SIZE 4096         // tamanho do bloco em bytes
-#define NUMBER_OF_BUCKETS 5     // número de buckets na tabela hash
+#define NUMBER_OF_BUCKETS 255360     // número de buckets na tabela hash
 #define NUMBER_OF_REGISTROS 2   // número de registros por bloco
 
 struct registro_t {
@@ -18,9 +18,9 @@ struct bloco_t {
 };
 
 struct bucket_t {
-    int endereco_bloco1;            // endereço do bloco 1 na memória secundária
+    int64_t endereco_bloco1;            // endereço do bloco 1 na memória secundária
     int num_registros_atualmente1;  // número de registros atualmente no bloco 1
-    int endereco_bloco2;            // endereço do bloco 2 na memória secundária
+    int64_t endereco_bloco2;            // endereço do bloco 2 na memória secundária
     int num_registros_atualmente2;  // número de registros atualmente no bloco 2
 };
 
