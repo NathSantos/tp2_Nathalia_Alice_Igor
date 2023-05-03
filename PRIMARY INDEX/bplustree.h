@@ -1,14 +1,15 @@
-#include<iostream>
-#include<string>
-#include<sstream>
-#include<fstream>
-#include<climits>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <climits>
 
 using namespace std;
 
 int MAX = 6; // Tamanho de cada nó
 
 class BPTree; // ÁRVORE B+
+
 
 // NÓ DA ÁRVORE B+
 class Node{
@@ -23,6 +24,11 @@ class Node{
 	public: 
 		Node();
 };
+
+typedef struct leaf_t{
+	int *key, size;
+	struct leaf_t *next;
+}leaf_t;
 
 // ÁRVORE B+
 class BPTree{
@@ -99,7 +105,7 @@ void BPTree::insert(int x){
 		root->key[0] = x; // Define chave[0] como "x"
 		root->is_leaf = true; // Define nó raiz como folha
 		root->size = 1; // Contador de chaves no nó raiz
-		cout << "Created root\nInserted " << x << " successfully\n"; 
+		// cout << "Inserted " << x << " successfully\n"; 
 
 	} else {
 
@@ -139,11 +145,10 @@ void BPTree::insert(int x){
 			cursor->size++; // Atualiza contador de chaves no cursor
 			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1]; // Atualiza ponteiro do cursor
 			cursor->ptr[cursor->size-1] = NULL; // Atualiza ponteiro do cursor
-			cout << "Inserted " << x << " successfully\n"; 
+			// cout << "Inserted " << x << " successfully\n"; 
 
 		} else {
-			cout << "Inserted "<< x <<" successfully\n";
-			cout << "Overflow in leaf node!\nSplitting leaf node\n";
+			// cout << "Inserted "<< x <<" successfully\n";
 
 			Node* newLeaf = new Node; // Aloca novo nó folha
 
@@ -176,7 +181,6 @@ void BPTree::insert(int x){
 			} // end for
 
 			if(cursor == root){
-				//if cursor is a root node, we create a new root
 				Node* newRoot = new Node;
 				newRoot->key[0] = newLeaf->key[0];
 				newRoot->ptr[0] = cursor;
@@ -184,7 +188,6 @@ void BPTree::insert(int x){
 				newRoot->is_leaf = false;
 				newRoot->size = 1;
 				root = newRoot;
-				cout<<"Created new root\n";
 			} else {
 				insertInternal(newLeaf->key[0],parent,newLeaf);
 			} // end if/else
@@ -195,28 +198,19 @@ void BPTree::insert(int x){
 // BPTREE: INSERÇÃO NO NÓ INTERNO NA ÁRVORE
 void BPTree::insertInternal(int x, Node* cursor, Node* child){
 	if(cursor->size < MAX){
-		//if cursor is not full
-		//find the correct position for new key
 		int i = 0;
 		while(x > cursor->key[i] && i < cursor->size) i++;
-		//make space for new key
 		for(int j = cursor->size;j > i; j--){
 			cursor->key[j] = cursor->key[j-1];
-		}//make space for new pointer
+		}
 		for(int j = cursor->size+1; j > i+1; j--){
 			cursor->ptr[j] = cursor->ptr[j-1];
 		}
 		cursor->key[i] = x;
 		cursor->size++;
 		cursor->ptr[i+1] = child;
-		cout<<"Inserted key in an Internal node successfully\n";
 	} else {
-		cout<<"Inserted key in an Internal node successfully\n";
-		cout<<"Overflow in internal node!\nSplitting internal node\n";
-		//if overflow in internal node
-		//create new internal node
 		Node* newInternal = new Node;
-		//create virtual Internal Node;
 		int virtualKey[MAX+1];
 		Node* virtualPtr[MAX+2];
 		for(int i = 0; i < MAX; i++){
@@ -227,28 +221,23 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child){
 		}
 		int i = 0, j;
 		while(x > virtualKey[i] && i < MAX) i++;
-		//make space for new key
 		for(int j = MAX+1;j > i; j--){
 			virtualKey[j] = virtualKey[j-1];
 		}
 		virtualKey[i] = x; 
-		//make space for new ptr
 		for(int j = MAX+2;j > i+1; j--){
 			virtualPtr[j] = virtualPtr[j-1];
 		}
 		virtualPtr[i+1] = child; 
 		newInternal->is_leaf = false;
-		//split cursor into two nodes
 		cursor->size = (MAX+1)/2;
 		newInternal->size = MAX-(MAX+1)/2;
-		//give elements and pointers to the new node
 		for(i = 0, j = cursor->size+1; i < newInternal->size; i++, j++){
 			newInternal->key[i] = virtualKey[j];
 		}
 		for(i = 0, j = cursor->size+1; i < newInternal->size+1; i++, j++){
 			newInternal->ptr[i] = virtualPtr[j];
 		}
-		// m = cursor->key[cursor->size]
 		if(cursor == root){
 			Node* newRoot = new Node;
 			newRoot->key[0] = cursor->key[cursor->size];
@@ -257,7 +246,6 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child){
 			newRoot->is_leaf = false;
 			newRoot->size = 1;
 			root = newRoot;
-			cout<<"Created new root\n";
 		} else {
 			insertInternal(cursor->key[cursor->size] ,findParent(root,cursor) ,newInternal);
 		}
@@ -266,8 +254,7 @@ void BPTree::insertInternal(int x, Node* cursor, Node* child){
 
 // BPTREE: PROCURA PAI
 Node* BPTree::findParent(Node* cursor, Node* child){
-	//finds parent using depth first traversal and ignores leaf nodes as they cannot be parents
-	//also ignores second last level because we will never find parent of a leaf node during insertion using this function
+	
 	Node* parent;
 	if(cursor->is_leaf || (cursor->ptr[0])->is_leaf){
 		return NULL;
@@ -286,7 +273,7 @@ Node* BPTree::findParent(Node* cursor, Node* child){
 
 // BPTREE: DISPLAY
 void BPTree::display(Node* cursor){
-	//depth first display
+
 	if(cursor!=NULL){
 		for(int i = 0; i < cursor->size; i++){
 			cout<<cursor->key[i]<<" ";
@@ -300,23 +287,42 @@ void BPTree::display(Node* cursor){
 	}
 } // end
 
+leaf_t leaves[170240];
+int cont_leaf = -1;
+
 // BPTREE: DISPLAY
 void BPTree::getLeaf(Node* cursor){
 
+	leaf_t leaf;
+	leaf.key = new int[MAX];
+	leaf.size = 0;
+	leaf.next = NULL;
+
 	if(cursor!=NULL){
-        
+		
 		for(int i = 0; i < cursor->size; i++){
             if(cursor->is_leaf == true){
-                cout<<cursor->key[i]<<" ";
+				leaf.key[i] = cursor->key[i];
+				leaf.size = cursor->size;
+				// cout << leaf.key[i] << " ";
             }
 		}
-		cout<<"\n";
+
+		if (cont_leaf != -1){
+			leaves[cont_leaf] = leaf;
+		}
+		cont_leaf++;
+		
+
+		// cout << "--" << leaf.size << endl;
+
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
 				getLeaf(cursor->ptr[i]);
 			}
 		}
 	}
+    
 } // end
 
 // BPTREE: GET RAIZ DA ÁRVORE
