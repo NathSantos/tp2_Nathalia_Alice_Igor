@@ -50,7 +50,7 @@ class BPTree{
 		void insert(int,int);
 		void display(Node*);
 		Node* getRoot();
-        void getLeaf(Node*);
+        void getLeaf(Node*, ofstream&);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -323,23 +323,23 @@ void BPTree::display(Node* cursor){
 } // end
 
 // BPTREE: DISPLAY
-void BPTree::getLeaf(Node* cursor){
+void BPTree::getLeaf(Node* cursor, ofstream& output){
 
 	if(cursor!=NULL){
 		for(int i = 0; i < cursor->size; i++){
 			if (cursor->is_leaf == true){
-				cout<<cursor->key[i]<<"";
-				cout<<"("<<cursor->address[i]<<") ";
+				output<<cursor->key[i]<<"";
+				output<<"("<<cursor->address[i]<<") ";
 			}
 		}
 
 		if (cursor->is_leaf == true){
-			cout<<"-- "<<cursor->size<<"\n";
+			output<<"-- "<<cursor->size<<"\n";
 		}
 		
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
-				getLeaf(cursor->ptr[i]);
+				getLeaf(cursor->ptr[i], output);
 			}
 		}
 	}
