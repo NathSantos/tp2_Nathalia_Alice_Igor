@@ -50,7 +50,7 @@ class BPTree{
 		void insert(int,int);
 		void display(Node*);
 		Node* getRoot();
-        void getLeaf(Node*, ofstream&);
+        void getLeaf(Node*, ofstream&, fstream&, int);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -323,23 +323,32 @@ void BPTree::display(Node* cursor){
 } // end
 
 // BPTREE: DISPLAY
-void BPTree::getLeaf(Node* cursor, ofstream& output){
+void BPTree::getLeaf(Node* cursor, ofstream& output, fstream& file, int posicao){
+	file.seekp(posicao);
 
 	if(cursor!=NULL){
 		for(int i = 0; i < cursor->size; i++){
 			if (cursor->is_leaf == true){
-				output<<cursor->key[i]<<"";
-				output<<"("<<cursor->address[i]<<") ";
+				output << cursor->key[i] << "" << endl;
+				output << "Ficou no endereco: " << file.tellp() << endl;
+				file.write((char*)&cursor->key[i], sizeof(int));
+				output << "("<<cursor->address[i]<<")" << endl;
+				output << "Ficou no endereco: " << file.tellp() << endl;
+				file.write((char*)&cursor->address[i], sizeof(int));
+				posicao = file.tellp();
+				output << "Endereço do PROXIMO: " << posicao << "\n" << endl;
 			}
 		}
 
-		if (cursor->is_leaf == true){
-			output<<"-- "<<cursor->size<<"\n";
-		}
+		// if (cursor->is_leaf == true){
+		// 	output<<"-- "<<cursor->size<<"\n";
+		// }
 		
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
-				getLeaf(cursor->ptr[i], output);
+				posicao = file.tellp();
+				output << "\nPOSICAO SENDO PASSADA: " << posicao << "\n" << endl;
+				getLeaf(cursor->ptr[i], output, file, posicao);
 			}
 		}
 	}

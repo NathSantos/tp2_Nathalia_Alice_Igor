@@ -1,5 +1,6 @@
 #define BLOCO_SIZE 4096         // tamanho do bloco em bytes
 #define NUMBER_OF_REGISTROS 2   // número de registros por bloco
+#define MAX_ID 1549146          // maior id do arquivo (ALTERE AQUI!!!)
 
 struct registro_t {
     int id;
