@@ -61,8 +61,11 @@ int main(int argc, char* argv[]){
     }
 
     cout << "=====================" << endl;
-    ofstream output("getLeaf.txt"); 
+
+    // =============== ESCREVENDO ARQUIVO DE INDICE PRIMARIO =================
+ 
     fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);
+    ofstream output("getLeaf.txt");
 
     bpt.getLeaf(bpt.getRoot(), output, file, 0);
 
