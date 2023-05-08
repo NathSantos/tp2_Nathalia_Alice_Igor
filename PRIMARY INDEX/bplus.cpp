@@ -76,7 +76,7 @@ int main(int argc, char* argv[]){
     fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);
     ofstream output("getLeaf.txt");
 
-    bpt.getLeaf(bpt.getRoot(), output, file, 0);
+    bpt.alocaArvore(bpt.getRoot(), output, file, 0);
 
     cout << "GET LEAF FEITO" << endl;
     
@@ -85,41 +85,41 @@ int main(int argc, char* argv[]){
 
     // =============== LENDO ARQUIVO DE INDICE PRIMARIO =================
 
-    cout << "Lendo arquivo de indice primario ..." << endl;
+    // cout << "Lendo arquivo de indice primario ..." << endl;
 
-    ifstream arquivo("arquivo_indice_primario.bin", ios::in | ios::binary);
-    ofstream output2("pares.txt");
+    // ifstream arquivo("arquivo_indice_primario.bin", ios::in | ios::binary);
+    // ofstream output2("pares.txt");
 
-    int par_size = 2 * sizeof(int); // tamanho do par (id, endereco)
+    // int par_size = 2 * sizeof(int); // tamanho do par (id, endereco)
 
-    output2 << "Tamanho do par: " << par_size << endl;
+    // output2 << "Tamanho do par: " << par_size << endl;
 
-    arquivo.seekg(0, ios::end);
-    int tamanho_arquivo = arquivo.tellg();
+    // arquivo.seekg(0, ios::end);
+    // int tamanho_arquivo = arquivo.tellg();
 
-    arquivo.seekg(0);
-    int endereco_atual;
+    // arquivo.seekg(0);
+    // int endereco_atual;
 
-    int num_pares = tamanho_arquivo / par_size;
-    output2 << "Tamanho do arquivo: " << tamanho_arquivo << endl;
-    output2 << "Numero de pares: " << num_pares << endl;
+    // int num_pares = tamanho_arquivo / par_size;
+    // output2 << "Tamanho do arquivo: " << tamanho_arquivo << endl;
+    // output2 << "Numero de pares: " << num_pares << endl;
 
-    for (int i = 0; i < num_pares; i++) {
-        int par_lido[2];
-        arquivo.read((char*)&par_lido, par_size);
-        arquivo.clear();
-        endereco_atual = par_size * i;
+    // for (int i = 0; i < num_pares; i++) {
+    //     int par_lido[2];
+    //     arquivo.read((char*)&par_lido, par_size);
+    //     arquivo.clear();
+    //     endereco_atual = par_size * i;
 
-        output2 << "============ PAR " << i+1 << " ============" << endl;
-        output2 << "-> Endereço do par atual: " << endereco_atual << endl;
+    //     output2 << "============ PAR " << i+1 << " ============" << endl;
+    //     output2 << "-> Endereço do par atual: " << endereco_atual << endl;
 
-        output2 << "ID: " << par_lido[0] << endl;
-        output2 << "Endereço: " << par_lido[1] << "\n" << endl;
-    }
-    output2.close();
-    arquivo.close();
+    //     output2 << "ID: " << par_lido[0] << endl;
+    //     output2 << "Endereço: " << par_lido[1] << "\n" << endl;
+    // }
+    // output2.close();
+    // arquivo.close();
 
-    cout << "Arquivo de indice primario lido!" << endl;
+    // cout << "Arquivo de indice primario lido!" << endl;
 
     cout << "Buscando registros ..." << endl;
 

@@ -51,6 +51,7 @@ class BPTree{
 		void display(Node*, ofstream&);
 		Node* getRoot();
         void getLeaf(Node*, ofstream&, fstream&, int);
+		void alocaArvore(Node*, ofstream&, fstream&, int);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -71,6 +72,39 @@ Leaf::Leaf(){
 BPTree::BPTree(){
 	root = NULL;
 } // end
+
+// Struct do bloco de um nó interno no arquivo de indice primario
+struct bloco_interno_t {
+    Node* filho1;
+    int chave1;
+    Node* filho2;
+    int chave2;
+    Node* filho3;
+    int chave3;
+    Node* filho4;
+    int chave4;
+    Node* filho5;
+    int chave5;
+    Node* filho6;
+    int chave6;
+    Node* filho7;
+};
+
+// Struct do bloco de um nó folha no arquivo de indice primario
+struct bloco_folha_t {
+    int chave1;
+    int endereco1;
+    int chave2;
+    int endereco2;
+    int chave3;
+    int endereco3;
+    int chave4;
+    int endereco4;
+    int chave5;
+    int endereco5;
+    int chave6;
+    int endereco6;
+};
 
 // BPTREE: BUSCA DE CHAVE NA ÁRVORE
 void BPTree::search(int x){
@@ -351,6 +385,83 @@ void BPTree::getLeaf(Node* cursor, ofstream& output, fstream& file, int posicao)
 				posicao = file.tellp();
 				output << "\nPOSICAO SENDO PASSADA: " << posicao << "\n" << endl;
 				getLeaf(cursor->ptr[i], output, file, posicao);
+			}
+		}
+	}
+    
+} // end
+
+// BPTREE: DISPLAY
+void BPTree::alocaArvore(Node* cursor, ofstream& output, fstream& file, int posicao){
+	file.seekp(posicao);
+	output << "===========================" << endl;
+	if(cursor!=NULL){
+		// Se for uma folha
+		if (cursor->is_leaf == true){
+			bloco_folha_t *bloco_folha = (bloco_folha_t*)malloc(sizeof(bloco_folha_t));
+			bloco_folha->chave1 = cursor->key[0];
+			bloco_folha->endereco1 = cursor->address[0];
+			output << "Chave 1: " << bloco_folha->chave1 << endl;
+			output << "Endereco 1: " << bloco_folha->endereco1 << endl;
+			bloco_folha->chave2 = cursor->key[1];
+			bloco_folha->endereco2 = cursor->address[1];
+			output << "Chave 2: " << bloco_folha->chave2 << endl;
+			output << "Endereco 2: " << bloco_folha->endereco2 << endl;
+			bloco_folha->chave3 = cursor->key[2];
+			bloco_folha->endereco3 = cursor->address[2];
+			output << "Chave 3: " << bloco_folha->chave3 << endl;
+			output << "Endereco 3: " << bloco_folha->endereco3 << endl;
+			bloco_folha->chave4 = cursor->key[3];
+			bloco_folha->endereco4 = cursor->address[3];
+			output << "Chave 4: " << bloco_folha->chave4 << endl;
+			output << "Endereco 4: " << bloco_folha->endereco4 << endl;
+			bloco_folha->chave5 = cursor->key[4];
+			bloco_folha->endereco5 = cursor->address[4];
+			output << "Chave 5: " << bloco_folha->chave5 << endl;
+			output << "Endereco 5: " << bloco_folha->endereco5 << endl;
+			bloco_folha->chave6 = cursor->key[5];
+			bloco_folha->endereco6 = cursor->address[5];
+			output << "Chave 6: " << bloco_folha->chave6 << endl;
+			output << "Endereco 6: " << bloco_folha->endereco6 << endl;
+			free(bloco_folha);
+		} 
+		// Se não for uma folha, ou seja, for um nó interno
+		else {
+			bloco_interno_t *bloco_interno = (bloco_interno_t*)malloc(sizeof(bloco_interno_t));
+			bloco_interno->filho1 = cursor->ptr[0];
+			bloco_interno->chave1 = cursor->key[0];
+			output << "Filho 1: " << bloco_interno->filho1 << endl;
+			output << "Chave 1: " << bloco_interno->chave1 << endl;
+			bloco_interno->filho2 = cursor->ptr[1];
+			bloco_interno->chave2 = cursor->key[1];
+			output << "Filho 2: " << bloco_interno->filho2 << endl;
+			output << "Chave 2: " << bloco_interno->chave2 << endl;
+			bloco_interno->filho3 = cursor->ptr[2];
+			bloco_interno->chave3 = cursor->key[2];
+			output << "Filho 3: " << bloco_interno->filho3 << endl;
+			output << "Chave 3: " << bloco_interno->chave3 << endl;
+			bloco_interno->filho4 = cursor->ptr[3];
+			bloco_interno->chave4 = cursor->key[3];
+			output << "Filho 4: " << bloco_interno->filho4 << endl;
+			output << "Chave 4: " << bloco_interno->chave4 << endl;
+			bloco_interno->filho5 = cursor->ptr[4];
+			bloco_interno->chave5 = cursor->key[4];
+			output << "Filho 5: " << bloco_interno->filho5 << endl;
+			output << "Chave 5: " << bloco_interno->chave5 << endl;
+			bloco_interno->filho6 = cursor->ptr[5];
+			bloco_interno->chave6 = cursor->key[5];
+			output << "Filho 6: " << bloco_interno->filho6 << endl;
+			output << "Chave 6: " << bloco_interno->chave6 << endl;
+			bloco_interno->filho7 = cursor->ptr[6];
+			output << "Filho 7: " << bloco_interno->filho7 << endl;
+			free(bloco_interno);
+		}
+
+		if(cursor->is_leaf != true){
+			for(int i = 0; i < cursor->size+1; i++){
+				posicao = file.tellp();
+				output << "\n======== OUTRO NÓ SENDO CHAMADO ========\n" << endl;
+				alocaArvore(cursor->ptr[i], output, file, posicao);
 			}
 		}
 	}
