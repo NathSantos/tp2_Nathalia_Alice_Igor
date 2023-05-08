@@ -395,65 +395,91 @@ void BPTree::getLeaf(Node* cursor, ofstream& output, fstream& file, int posicao)
 void BPTree::alocaArvore(Node* cursor, ofstream& output, fstream& file, int posicao){
 	file.seekp(posicao);
 	output << "===========================" << endl;
+
 	if(cursor!=NULL){
+		output << "SIZE ---> " << cursor->size << endl;
 		// Se for uma folha
 		if (cursor->is_leaf == true){
 			bloco_folha_t *bloco_folha = (bloco_folha_t*)malloc(sizeof(bloco_folha_t));
-			bloco_folha->chave1 = cursor->key[0];
-			bloco_folha->endereco1 = cursor->address[0];
-			output << "Chave 1: " << bloco_folha->chave1 << endl;
-			output << "Endereco 1: " << bloco_folha->endereco1 << endl;
-			bloco_folha->chave2 = cursor->key[1];
-			bloco_folha->endereco2 = cursor->address[1];
-			output << "Chave 2: " << bloco_folha->chave2 << endl;
-			output << "Endereco 2: " << bloco_folha->endereco2 << endl;
-			bloco_folha->chave3 = cursor->key[2];
-			bloco_folha->endereco3 = cursor->address[2];
-			output << "Chave 3: " << bloco_folha->chave3 << endl;
-			output << "Endereco 3: " << bloco_folha->endereco3 << endl;
-			bloco_folha->chave4 = cursor->key[3];
-			bloco_folha->endereco4 = cursor->address[3];
-			output << "Chave 4: " << bloco_folha->chave4 << endl;
-			output << "Endereco 4: " << bloco_folha->endereco4 << endl;
-			bloco_folha->chave5 = cursor->key[4];
-			bloco_folha->endereco5 = cursor->address[4];
-			output << "Chave 5: " << bloco_folha->chave5 << endl;
-			output << "Endereco 5: " << bloco_folha->endereco5 << endl;
-			bloco_folha->chave6 = cursor->key[5];
-			bloco_folha->endereco6 = cursor->address[5];
-			output << "Chave 6: " << bloco_folha->chave6 << endl;
-			output << "Endereco 6: " << bloco_folha->endereco6 << endl;
+			
+			for(int i = 0; i < cursor->size; i++){
+				if(i == 0) {
+					bloco_folha->chave1 = cursor->key[i];
+					bloco_folha->endereco1 = cursor->address[i];
+					output << "Chave 1: " << bloco_folha->chave1 << endl;
+					output << "Endereco 1: " << bloco_folha->endereco1 << endl;
+				} else if (i == 1) {
+					bloco_folha->chave2 = cursor->key[i];
+					bloco_folha->endereco2 = cursor->address[i];
+					output << "Chave 2: " << bloco_folha->chave2 << endl;
+					output << "Endereco 2: " << bloco_folha->endereco2 << endl;
+				} else if (i == 2) {
+					bloco_folha->chave3 = cursor->key[i];
+					bloco_folha->endereco3 = cursor->address[i];
+					output << "Chave 3: " << bloco_folha->chave3 << endl;
+					output << "Endereco 3: " << bloco_folha->endereco3 << endl;
+				} else if (i == 3) {
+					bloco_folha->chave4 = cursor->key[i];
+					bloco_folha->endereco4 = cursor->address[i];
+					output << "Chave 4: " << bloco_folha->chave4 << endl;
+					output << "Endereco 4: " << bloco_folha->endereco4 << endl;
+				} else if(i == 4) {
+					bloco_folha->chave5 = cursor->key[i];
+					bloco_folha->endereco5 = cursor->address[i];
+					output << "Chave 5: " << bloco_folha->chave5 << endl;
+					output << "Endereco 5: " << bloco_folha->endereco5 << endl;
+				} else if (i == 5) {
+					bloco_folha->chave6 = cursor->key[i];
+					bloco_folha->endereco6 = cursor->address[i];
+					output << "Chave 6: " << bloco_folha->chave6 << endl;
+					output << "Endereco 6: " << bloco_folha->endereco6 << endl;
+				}
+			}
+			output << "Tamanho do bloco: " << sizeof(bloco_folha) << endl;
+			output << "Tamanho da struct: " << sizeof(bloco_folha_t) << endl;
 			free(bloco_folha);
 		} 
 		// Se não for uma folha, ou seja, for um nó interno
 		else {
 			bloco_interno_t *bloco_interno = (bloco_interno_t*)malloc(sizeof(bloco_interno_t));
-			bloco_interno->filho1 = cursor->ptr[0];
-			bloco_interno->chave1 = cursor->key[0];
-			output << "Filho 1: " << bloco_interno->filho1 << endl;
-			output << "Chave 1: " << bloco_interno->chave1 << endl;
-			bloco_interno->filho2 = cursor->ptr[1];
-			bloco_interno->chave2 = cursor->key[1];
-			output << "Filho 2: " << bloco_interno->filho2 << endl;
-			output << "Chave 2: " << bloco_interno->chave2 << endl;
-			bloco_interno->filho3 = cursor->ptr[2];
-			bloco_interno->chave3 = cursor->key[2];
-			output << "Filho 3: " << bloco_interno->filho3 << endl;
-			output << "Chave 3: " << bloco_interno->chave3 << endl;
-			bloco_interno->filho4 = cursor->ptr[3];
-			bloco_interno->chave4 = cursor->key[3];
-			output << "Filho 4: " << bloco_interno->filho4 << endl;
-			output << "Chave 4: " << bloco_interno->chave4 << endl;
-			bloco_interno->filho5 = cursor->ptr[4];
-			bloco_interno->chave5 = cursor->key[4];
-			output << "Filho 5: " << bloco_interno->filho5 << endl;
-			output << "Chave 5: " << bloco_interno->chave5 << endl;
-			bloco_interno->filho6 = cursor->ptr[5];
-			bloco_interno->chave6 = cursor->key[5];
-			output << "Filho 6: " << bloco_interno->filho6 << endl;
-			output << "Chave 6: " << bloco_interno->chave6 << endl;
-			bloco_interno->filho7 = cursor->ptr[6];
-			output << "Filho 7: " << bloco_interno->filho7 << endl;
+			
+			for(int i = 0; i < cursor->size; i++){
+				if(i == 0) {
+					bloco_interno->filho1 = cursor->ptr[i];
+					bloco_interno->chave1 = cursor->key[i];
+					output << "Filho 1: " << bloco_interno->filho1 << endl;
+					output << "Chave 1: " << bloco_interno->chave1 << endl;
+					bloco_interno->filho2 = cursor->ptr[i+1];
+					output << "Filho 2: " << bloco_interno->filho2 << endl;
+				} else if (i == 1) {
+					bloco_interno->chave2 = cursor->key[i];					
+					output << "Chave 2: " << bloco_interno->chave2 << endl;
+					bloco_interno->filho3 = cursor->ptr[i+1];
+					output << "Filho 3: " << bloco_interno->filho3 << endl;
+				} else if (i == 2) {
+					bloco_interno->chave3 = cursor->key[i];
+					output << "Chave 3: " << bloco_interno->chave3 << endl;
+					bloco_interno->filho4 = cursor->ptr[i+1];
+					output << "Filho 4: " << bloco_interno->filho4 << endl;
+				} else if (i == 3) {
+					bloco_interno->chave4 = cursor->key[i];
+					output << "Chave 4: " << bloco_interno->chave4 << endl;
+					bloco_interno->filho5 = cursor->ptr[i+1];
+					output << "Filho 5: " << bloco_interno->filho5 << endl;
+				} else if(i == 4) {
+					bloco_interno->chave5 = cursor->key[i];
+					output << "Chave 5: " << bloco_interno->chave5 << endl;
+					bloco_interno->filho6 = cursor->ptr[i+1];
+					output << "Filho 6: " << bloco_interno->filho6 << endl;
+				} else if (i == 5) {
+					bloco_interno->chave6 = cursor->key[i];
+					output << "Chave 6: " << bloco_interno->chave6 << endl;
+					bloco_interno->filho7 = cursor->ptr[i+1];
+					output << "Filho 7: " << bloco_interno->filho7 << endl;
+				}
+			}		
+			output << "Tamanho do bloco: " << sizeof(bloco_interno) << endl;
+			output << "Tamanho da struct: " << sizeof(bloco_interno_t) << endl;
 			free(bloco_interno);
 		}
 
