@@ -11,7 +11,7 @@ int enderecos[MAX_ID];  // se preciso, mudar MAX_ID no arquivo structs.h
 int cont = 0;
 
 void ler_arquivo_binario() {
-    ifstream arquivo("arquivo_dados.bin", ios::in | ios::binary);
+    ifstream arquivo("arquivo_dados100.bin", ios::in | ios::binary);
 
     if (!arquivo) {
         cerr << "Erro ao abrir o arquivo!" << endl;
@@ -61,6 +61,15 @@ int main(int argc, char* argv[]){
     }
 
     cout << "=====================" << endl;
+
+    // ================== LENDO ARVORE ==================
+
+    ofstream arqMostra("mostraArvore.txt");
+
+    cout << "Lendo arvore ..." << endl;
+    bpt.display(bpt.getRoot(), arqMostra);
+
+    arqMostra.close();
 
     // =============== ESCREVENDO ARQUIVO DE INDICE PRIMARIO =================
  
@@ -113,6 +122,9 @@ int main(int argc, char* argv[]){
     cout << "Arquivo de indice primario lido!" << endl;
 
     cout << "Buscando registros ..." << endl;
+
+    cout << "Tamanho: " << sizeof(bloco_interno_t) << endl;
+    cout << "Tamanho: " << sizeof(bloco_folha_t) << endl;
 	bpt.search(552);       
 	bpt.search(1549146);    
 	bpt.search(725886);     

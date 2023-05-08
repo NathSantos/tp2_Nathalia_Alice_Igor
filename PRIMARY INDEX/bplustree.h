@@ -48,7 +48,7 @@ class BPTree{
 		BPTree();
 		void search(int);
 		void insert(int,int);
-		void display(Node*);
+		void display(Node*, ofstream&);
 		Node* getRoot();
         void getLeaf(Node*, ofstream&, fstream&, int);
 };
@@ -307,16 +307,18 @@ Node* BPTree::findParent(Node* cursor, Node* child){
 } // end
 
 // BPTREE: DISPLAY
-void BPTree::display(Node* cursor){
+void BPTree::display(Node* cursor, ofstream& file){
 
 	if(cursor!=NULL){
 		for(int i = 0; i < cursor->size; i++){
 			cout<<cursor->key[i]<<" ";
+			file << cursor->key[i] << " ";
 		}
 		cout<<"\n";
+		file << "\n";
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
-				display(cursor->ptr[i]);
+				display(cursor->ptr[i], file);
 			}
 		}
 	}
