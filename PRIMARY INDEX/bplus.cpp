@@ -11,7 +11,7 @@ int enderecos[MAX_ID];  // se preciso, mudar MAX_ID no arquivo structs.h
 int cont = 0;
 
 void ler_arquivo_binario() {
-    ifstream arquivo("arquivo_dados100.bin", ios::in | ios::binary);
+    ifstream arquivo("arquivo_dados5000.bin", ios::in | ios::binary);
 
     if (!arquivo) {
         cerr << "Erro ao abrir o arquivo!" << endl;
@@ -50,15 +50,21 @@ void ler_arquivo_binario() {
 }
 
 int main(int argc, char* argv[]){
-	
 	ler_arquivo_binario();
 
     cout << "=====================" << endl;
+    fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);
+    ofstream output("alocaArvore.txt");
 
     for (int i = 0; i < cont; i++){
-        bpt.insert(registros[i], enderecos[i]);
+        bpt.insert(registros[i], enderecos[i], file, output);
         cout << registros[i] << "(" << enderecos[i] << ")" << endl;
     }
+
+    cout << "ALOCA ARVORE FEITO" << endl;
+    
+    output.close();
+    file.close();
 
     cout << "=====================" << endl;
 
@@ -69,19 +75,7 @@ int main(int argc, char* argv[]){
     cout << "Lendo arvore ..." << endl;
     bpt.display(bpt.getRoot(), arqMostra);
 
-    arqMostra.close();
-
-    // =============== ESCREVENDO ARQUIVO DE INDICE PRIMARIO =================
- 
-    fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);
-    ofstream output("getLeaf.txt");
-
-    bpt.alocaArvore(bpt.getRoot(), output, file, 0);
-
-    cout << "GET LEAF FEITO" << endl;
-    
-    output.close();
-    file.close();
+    arqMostra.close();    
 
     // =============== LENDO ARQUIVO DE INDICE PRIMARIO =================
 
@@ -123,12 +117,13 @@ int main(int argc, char* argv[]){
 
     cout << "Buscando registros ..." << endl;
 
-    cout << "Tamanho: " << sizeof(bloco_interno_t) << endl;
-    cout << "Tamanho: " << sizeof(bloco_folha_t) << endl;
 	bpt.search(552);       
 	bpt.search(1549146);    
 	bpt.search(725886);     
     bpt.search(554);    
-    bpt.search(555);        
+    bpt.search(555);  
+    cout << sizeof(bloco_interno_t) << endl;
+    cout << sizeof(bloco_folha_t) << endl;
+    cout << "MAX definido: " << MAX << endl;      
 	return 0;
 }
