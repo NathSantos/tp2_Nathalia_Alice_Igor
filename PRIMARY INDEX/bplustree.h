@@ -7,7 +7,7 @@
 using namespace std;
 
 #define BLOCO_SIZE 4096         // tamanho do bloco em bytes
-#define MAX_ID 5003   
+#define MAX_ID 5003    
 
 class BPTree; // ÁRVORE B+
 
@@ -118,9 +118,11 @@ void BPTree::insert(int x, int block_address, fstream& file, ofstream& output){
 		root->address[0] = block_address; // Define endereço do bloco de dados
 		root->is_leaf = true; // Define nó raiz como folha
 		root->size = 1; // Contador de chaves no nó raiz
-		// cout << "Inserted1 " << x << " successfully\n"; 
+		output << "\nInserted1 " << x << " successfully\n"; 
 		alocaArvore(root, file, output);
-	} else {
+	} 
+	// Se árvore não estiver vazia, procuramos onde inserir chave
+	else {
 
 		Node* cursor = root; // Define cursor para raiz da árvore
 		Node* parent; // Define ponteiro para nó pai
@@ -144,7 +146,7 @@ void BPTree::insert(int x, int block_address, fstream& file, ofstream& output){
 			} // end for
 		} // end while
 
-		if(cursor->size < MAX){ // Se cursor não estiver cheio
+		if(cursor->size < MAX){ // Se o nó folha não estiver cheio
 
 			int i = 0;
 			while(x > cursor->key[i] && i < cursor->size) i++; // Encontra posição para inserir chave
@@ -159,11 +161,11 @@ void BPTree::insert(int x, int block_address, fstream& file, ofstream& output){
 			cursor->size++; // Atualiza contador de chaves no cursor
 			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1]; // Atualiza ponteiro do cursor
 			cursor->ptr[cursor->size-1] = NULL; // Atualiza ponteiro do cursor
-			// cout << "Inserted2 " << x << " successfully\n"; 
+			output << "\nInserted2 " << x << " successfully\n"; 
 			alocaArvore(cursor, file, output);
-		} else {
-
-			// cout << "Inserted3 "<< x <<" successfully\n";
+		} 
+		// Se o nó folha estiver cheio
+		else {
 
 			Node* newLeaf = new Node; // Aloca novo nó folha
 
@@ -210,8 +212,10 @@ void BPTree::insert(int x, int block_address, fstream& file, ofstream& output){
 				newRoot->is_leaf = false;
 				newRoot->size = 1;
 				root = newRoot;
+				output << "\nInserted3 "<< x <<" successfully\n";
 				alocaArvore(root, file, output);
 			} else {
+				output << "\nInserted4 "<< x <<" successfully\n";
 				insertInternal(newLeaf->key[0],parent,newLeaf,newLeaf->address[0]);
 				alocaArvore(cursor, file, output);
 			}
@@ -306,24 +310,25 @@ Node* BPTree::findParent(Node* cursor, Node* child){
 } // end
 
 // BPTREE: DISPLAY
-void BPTree::display(Node* cursor, ofstream& file){
+void BPTree::display(Node* cursor, ofstream& output){
 
 	if(cursor!=NULL){
 		if ( cursor->is_leaf == true) {
-			file << "\nÉ folha!" << endl;
+			output << "\nÉ folha!" << endl;
 		} else {
-			file << "\nNão é folha!" << endl;
+			output << "\nNão é folha!" << endl;
 		}
-		file << "Tamanho do nó: " << cursor->size << endl;
+		output << "Tamanho do nó: " << cursor->size << endl;
+		output << "Endereço do nó: " << cursor << endl;
 		for(int i = 0; i < cursor->size; i++){
 			if(cursor->key[i] > 0 && cursor->key[i] <= MAX_ID ) {
-				file << cursor->key[i] << " ";
+				output << cursor->key[i] << " ";
 			}
 		}
-		file << "\n";
+		output << "\n";
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
-				display(cursor->ptr[i], file);
+				display(cursor->ptr[i], output);
 			}
 		}
 	}
@@ -375,7 +380,7 @@ void BPTree::alocaArvore(Node* cursor, fstream& file, ofstream& output){
 		output << "\n-----------------------" << endl;
 
 		if(cursor == getRoot()){
-			output << "RAIZ CARALHOOOOOOOOO" << endl;
+			output << "RAIZ AQUIIIIIIIIIIIIII" << endl;
 		}
 		if ( cursor->is_leaf == true) {
 			output << "É folha!" << endl;
@@ -394,7 +399,7 @@ void BPTree::alocaArvore(Node* cursor, fstream& file, ofstream& output){
 						output << "- PONTEIRO: " << cursor->ptr[i] << endl;
 						output << "- CHAVE: " << cursor->key[i] << endl;
 						output << "- PONTEIRO: " << cursor->ptr[i+1] << endl;
-						
+
 					}
 					// Caso contrário, printa a chave e o ponteiro posterior à chave
 					else {
