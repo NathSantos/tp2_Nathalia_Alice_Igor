@@ -44,12 +44,18 @@ int main() {
     if (encontrado) {
         // Mostra as informações do registro encontrado
         cout << "ID: " << registro.id << endl;
-        cout << "Campo 1: " << registro.campo1 << endl;
-        cout << "Campo 2: " << registro.campo2 << endl;
+        cout << "Titulo: " << registro.titulo << endl;
+        cout << "Ano: " << registro.ano << endl;
+        cout << "Autores: " << registro.autores << endl;
+        cout << "Citacoes: " << registro.citacoes << endl;
+        cout << "Atualizacao: " << registro.atualizacao << endl;
+        cout << "Snippet: " << registro.snippet << endl;
         cout << "Blocos lidos: " << blocos_lidos << endl;
     } else {
         cout << "Registro nao encontrado" << endl;
     }
+
+    return 0;
 
     return 0;
 }
