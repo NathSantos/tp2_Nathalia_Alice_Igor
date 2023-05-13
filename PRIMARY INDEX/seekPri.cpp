@@ -13,8 +13,8 @@ struct Registro {
 
 int main() {
     // Abre o arquivo de índice primário em modo de leitura binária
-    FILE* indice = fopen("indice_primario.bin", "rb");
-    if (indice == NULL) {
+    ifstream arquivo("arquivo_dados.bin", ios::in | ios::binary);
+    if (arquivo == NULL) {
         cout << "Erro ao abrir o arquivo de índice primário" << endl;
         return 1;
     }
@@ -54,8 +54,6 @@ int main() {
     } else {
         cout << "Registro nao encontrado" << endl;
     }
-
-    return 0;
 
     return 0;
 }
