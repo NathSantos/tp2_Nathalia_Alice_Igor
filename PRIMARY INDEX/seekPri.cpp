@@ -13,7 +13,7 @@ struct Registro {
 
 int main() {
     // Abre o arquivo de índice primário em modo de leitura binária
-    ifstream arquivo("arquivo_dados.bin", ios::in | ios::binary);
+    ifstream arquivo("arquivo_index_primario.bin", ios::in | ios::binary);
     if (arquivo == NULL) {
         cout << "Erro ao abrir o arquivo de índice primário" << endl;
         return 1;
