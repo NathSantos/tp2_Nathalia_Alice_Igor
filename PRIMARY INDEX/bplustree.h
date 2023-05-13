@@ -8,7 +8,7 @@
 using namespace std;
 
 #define BLOCO_SIZE 4096         // tamanho do bloco em bytes
-#define MAX_ID 5003    
+#define MAX_ID 5003   
 
 class BPTree; // ÁRVORE B+
 
@@ -28,7 +28,6 @@ class Node{
 };
 
 const int MAX = (4096/(sizeof(int *) + sizeof(Node *)) - 1) - 1;
-//const int MAX = 6;
 
 struct bloco_interno_t {
     int chaves[MAX];
@@ -65,7 +64,6 @@ class BPTree{
 		void alocaArvore_tipo1(Node*,fstream&,ofstream&);
 		void alocaArvore_tipo2(Node*,int,fstream&,ofstream&);
 		void alocaArvore_tipo3(Node*,fstream&,ofstream&);
-		void alocaArvore_tipo4(Node*,fstream&,ofstream&);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -522,6 +520,10 @@ void BPTree::alocaArvore_tipo1(Node* cursor, fstream& file, ofstream& output){
 
 		file.seekp(0);	// Vai para o início do arquivo
 		
+		int tipo_bloco = 1;	// Tipo do bloco (0 = interno, 1 = folha)
+
+		file.write((char*)&tipo_bloco, sizeof(int));		// Escreve o tipo do bloco
+		file.write((char*)&cursor->size, sizeof(int));		// Escreve o tamanho do nó
 		file.write((char*)&cursor->key, sizeof(int));		// Escreve a chave
 		file.write((char*)&cursor->address, sizeof(int));	// Escreve o endereço do arquivo de dados	
 
@@ -541,6 +543,12 @@ void BPTree::alocaArvore_tipo2(Node* cursor, int chave, fstream& file, ofstream&
 
 			// Grava a chave e o endereço do arquivo de dados na raiz
 			for(int i = 0; i < cursor->size; i++){
+				if(i == 0) {
+					int tipo_bloco = 1;								// Tipo do bloco (0 = interno, 1 = folha)
+
+					file.write((char*)&tipo_bloco, sizeof(int));	// Escreve o tipo do bloco
+					file.write((char*)&cursor->size, sizeof(int));	// Escreve o tamanho do nó
+				}
 				file.write((char*)&cursor->key[i], sizeof(int));
 				file.write((char*)&cursor->address[i], sizeof(int));
 				output << "CHAVE " << cursor->key[i] << endl;
@@ -556,6 +564,12 @@ void BPTree::alocaArvore_tipo2(Node* cursor, int chave, fstream& file, ofstream&
 
 			// Grava a chave e o endereço do arquivo de dados no bloco folha
 			for(int i = 0; i < cursor->size; i++){
+				if(i == 0) {
+					int tipo_bloco = 1;								// Tipo do bloco (0 = interno, 1 = folha)
+
+					file.write((char*)&tipo_bloco, sizeof(int));	// Escreve o tipo do bloco
+					file.write((char*)&cursor->size, sizeof(int));	// Escreve o tamanho do nó
+				}
 				file.write((char*)&cursor->key[i], sizeof(int));
 				file.write((char*)&cursor->address[i], sizeof(int));
 				output << "CHAVE " << cursor->key[i] << endl;
@@ -587,6 +601,12 @@ void BPTree::alocaArvore_tipo3(Node* root, fstream& file, ofstream& output) {
 
 			// Grava a chave e o endereço do arquivo de dados no bloco
             for (int i = 0; i < cursor->size; i++) {
+				if(i == 0) {
+					int tipo_bloco = 1;								// Tipo do bloco (0 = interno, 1 = folha)
+
+					file.write((char*)&tipo_bloco, sizeof(int));	// Escreve o tipo do bloco
+					file.write((char*)&cursor->size, sizeof(int));	// Escreve o tamanho do nó
+				}
                 file.write((char*)&cursor->key[i], sizeof(int));
                 file.write((char*)&cursor->address[i], sizeof(int));
 				output << "CHAVE " << cursor->key[i] << endl;
@@ -602,6 +622,10 @@ void BPTree::alocaArvore_tipo3(Node* root, fstream& file, ofstream& output) {
 
 				// Se for a primeira chave do bloco
                 if (i == 0) {
+					int tipo_bloco = 0;								// Tipo do bloco (0 = interno, 1 = folha)
+
+					file.write((char*)&tipo_bloco, sizeof(int));	// Escreve o tipo do bloco
+					file.write((char*)&cursor->size, sizeof(int));		// Escreve o tamanho do nó
 
 					cont_endereco++;									// Incrementa o contador de endereço
 					endereco_primario = cont_endereco * BLOCO_SIZE;		// Calcula o endereço do arquivo de índice que será gravado
