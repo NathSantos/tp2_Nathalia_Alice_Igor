@@ -3,11 +3,12 @@
 #include <sstream>
 #include <fstream>
 #include <climits>
-#include <cstring>
+#include <queue>
 
 using namespace std;
 
-int MAX = 6; // Tamanho de cada nó
+#define BLOCO_SIZE 4096         // tamanho do bloco em bytes
+#define MAX_ID 5003    
 
 class BPTree; // ÁRVORE B+
 
@@ -15,7 +16,7 @@ class BPTree; // ÁRVORE B+
 class Node{
 
 	// Atributos
-	bool is_leaf;
+	bool is_leaf;	
 	string *key;
 	int size;
 	int *address;
@@ -26,6 +27,9 @@ class Node{
 	public: 
 		Node();
 };
+
+const int MAX = (4096/(sizeof(string *) + sizeof(Node *)) - 1) - 1;
+//const int MAX = 6;
 
 // ÁRVORE B+
 class BPTree{
@@ -38,11 +42,19 @@ class BPTree{
 	// Métodos
 	public:
 		BPTree();
-		void search(string);
-		void insert(string,int);
-		void display(Node*, ofstream&);
+		Node* search(string);
+		void insert(string,int,fstream&,ofstream&);
+		void display(Node*, ofstream&, int, int);
+		void displayBFS(Node*, ofstream&);
+		int contaBlocosInternos(Node*);
 		Node* getRoot();
+		int buscaBlocoBinario(Node*);
         void getLeaf(Node*, ofstream&, fstream&, int);
+		void alocaArvore(Node*,fstream&,ofstream&);
+		void alocaArvore_tipo1(Node*,fstream&,ofstream&);
+		void alocaArvore_tipo2(Node*,string,fstream&,ofstream&);
+		void alocaArvore_tipo3(Node*,fstream&,ofstream&);
+		void alocaArvore_tipo4(Node*,fstream&,ofstream&);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -58,7 +70,7 @@ BPTree::BPTree(){
 } // end
 
 // BPTREE: BUSCA DE CHAVE NA ÁRVORE
-void BPTree::search(string x){
+Node* BPTree::search(string x){
 	if (root==NULL){ // Se árvore estiver vazia
 		cout << "Tree empty\n";
 	} else {
@@ -68,7 +80,7 @@ void BPTree::search(string x){
 		// Cursor procura nó folha na árvore (que pode conter chave ou não)
 		while(cursor->is_leaf == false){
 			for(int i = 0; i < cursor->size; i++){
-				if(x < cursor->key[i]){ // Se o valor buscado for menor que a chave verificada
+				if(x.compare(cursor->key[i]) < 0){ // Se o valor buscado for menor que a chave verificada
 					cursor = cursor->ptr[i]; // Atualiza cursor
 					break;
 				} // end if
@@ -81,9 +93,9 @@ void BPTree::search(string x){
 
 		// Procura chave para ver se existe na folha
 		for(int i = 0; i < cursor->size; i++){
-			if(cursor->key[i] == x){
+			if(cursor->key[i].compare(x) == 0){
 				cout << "Found\n"; // Chave encontrada
-				return;
+				return cursor;
 			} // end if
 		} // end for
 
@@ -93,9 +105,8 @@ void BPTree::search(string x){
 
 } // end
 
-
 // BPTREE: INSERÇÃO DE CHAVE NA ÁRVORE
-void BPTree::insert(string x, int block_address){
+void BPTree::insert(string x, int block_address, fstream& file, ofstream& output){
 	
 	// Verifica se árvore está vazia ou não
 	if (root==NULL){
@@ -105,9 +116,12 @@ void BPTree::insert(string x, int block_address){
 		root->address[0] = block_address; // Define endereço do bloco de dados
 		root->is_leaf = true; // Define nó raiz como folha
 		root->size = 1; // Contador de chaves no nó raiz
-		// cout << "Inserted1 " << x << " successfully\n"; 
-
-	} else {
+		output << "\nInserted1 " << x << " successfully\n"; 
+		alocaArvore_tipo1(root, file, output);
+		//alocaArvore(root, file, output);
+	} 
+	// Se árvore não estiver vazia, procuramos onde inserir chave
+	else {
 
 		Node* cursor = root; // Define cursor para raiz da árvore
 		Node* parent; // Define ponteiro para nó pai
@@ -131,7 +145,7 @@ void BPTree::insert(string x, int block_address){
 			} // end for
 		} // end while
 
-		if(cursor->size < MAX){ // Se cursor não estiver cheio
+		if(cursor->size < MAX){ // Se o nó folha não estiver cheio
 
 			int i = 0;
 			while(x.compare(cursor->key[i]) > 0 && i < cursor->size) i++; // Encontra posição para inserir chave
@@ -146,11 +160,12 @@ void BPTree::insert(string x, int block_address){
 			cursor->size++; // Atualiza contador de chaves no cursor
 			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1]; // Atualiza ponteiro do cursor
 			cursor->ptr[cursor->size-1] = NULL; // Atualiza ponteiro do cursor
-			// cout << "Inserted2 " << x << " successfully\n"; 
-
-		} else {
-
-			// cout << "Inserted3 "<< x <<" successfully\n";
+			output << "\nInserted2 " << x << " successfully\n"; 
+			alocaArvore_tipo2(cursor, x, file, output);
+			//alocaArvore(cursor, file, output);
+		} 
+		// Se o nó folha estiver cheio
+		else {
 
 			Node* newLeaf = new Node; // Aloca novo nó folha
 
@@ -163,7 +178,7 @@ void BPTree::insert(string x, int block_address){
 			} // end for
 
 			int i = 0, j; // Encontra posição para inserir chave
-			while(x.compare(virtualNode[i]) > 0 && i < MAX) i++; // Encontra posição para inserir chave
+			while(x > virtualNode[i] && i < MAX) i++; // Encontra posição para inserir chave
 			
 			for(int j = MAX+1;j > i; j--){ // Desloca chaves para direita
 				virtualNode[j] = virtualNode[j-1]; // Desloca chaves para direita
@@ -174,7 +189,7 @@ void BPTree::insert(string x, int block_address){
 			virtualAddress[i] = block_address; // Define endereço do bloco de dados
 			newLeaf->is_leaf = true; // Define novo nó folha
 			cursor->size = (MAX+(MAX/2))/2; // Atualiza contador de chaves no cursor
-			newLeaf->size = (MAX+1)/2; // Atualiza contador de chaves no cursor
+			newLeaf->size = (MAX-(MAX/2))/2 +2; // Atualiza contador de chaves no cursor
 			cursor->ptr[cursor->size] = newLeaf; // Atualiza ponteiro do cursor
 			newLeaf->ptr[newLeaf->size] = cursor->ptr[MAX]; // Atualiza ponteiro do cursor
 			cursor->ptr[MAX] = NULL; // Atualiza ponteiro do cursor
@@ -197,13 +212,18 @@ void BPTree::insert(string x, int block_address){
 				newRoot->is_leaf = false;
 				newRoot->size = 1;
 				root = newRoot;
+				output << "\nInserted3 "<< x <<" successfully\n";
+				alocaArvore_tipo3(root, file, output);
+				//alocaArvore(root, file, output);
 			} else {
+				output << "\nInserted4 "<< x <<" successfully\n";
 				insertInternal(newLeaf->key[0],parent,newLeaf,newLeaf->address[0]);
+				alocaArvore_tipo3(root, file, output);
+				//alocaArvore(cursor, file, output);
 			}
 			
 		}
 	}
-
 } // end
 
 // BPTREE: INSERÇÃO NO NÓ INTERNO NA ÁRVORE
@@ -291,26 +311,125 @@ Node* BPTree::findParent(Node* cursor, Node* child){
 	return parent;
 } // end
 
-// BPTREE: DISPLAY
-void BPTree::display(Node* cursor, ofstream& file){
+// BPTREE: DISPLAY DFS
+void BPTree::display(Node* cursor, ofstream& output, int posicao, int contador){
 
 	if(cursor!=NULL){
-		if(cursor->is_leaf == true) {
-			file << "====>> É Folha: " << endl;
+		output << "\n#### Endereço Binário Índice: " << posicao << " ####" << endl;
+
+		if ( cursor->is_leaf == true) {
+			output << "\nÉ folha!" << endl;
+			output << "Tamanho do nó: " << cursor->size << endl;
+			output << "Endereço do nó: " << cursor << endl;
+			for (int i = 0; i < cursor->size; i++) {
+				output << cursor->key[i];
+				output << " (" << cursor->address[i] << ") | ";
+			}
+		} else {
+			output << "\nNão é folha!" << endl;
+			output << "Tamanho do nó: " << cursor->size << endl;
+			output << "Endereço do nó: " << cursor << endl;
+			for (int i = 0; i < cursor->size; i++) {
+				output << cursor->key[i];
+				output << " (" << cursor->address[i] << ") | ";
+			}
+			output << "\n";
+			for (int i = 0; i < cursor->size+1; i++) {
+				output << BLOCO_SIZE*contador << " ";
+				contador++;
+			}
 		}
-		for(int i = 0; i < cursor->size; i++){
-			cout<<cursor->key[i]<<" -------- ";
-			file << cursor->key[i] << " -------- ";
-		}
-		cout<<"\n";
-		file << "\n";
+
+		output << "\n";
+
 		if(cursor->is_leaf != true){
 			for(int i = 0; i < cursor->size+1; i++){
-				display(cursor->ptr[i], file);
+				posicao += BLOCO_SIZE;
+				display(cursor->ptr[i], output, posicao, contador);
 			}
 		}
 	}
 } // end
+
+// BPTREE: DISPLAY BSF (Técnica BFS - busca por largura)
+void BPTree::displayBFS(Node* root, ofstream& output) {
+    queue<Node*> nodeQueue;
+    nodeQueue.push(root);
+	
+	int posicao = 0;
+	int contador = 1;
+
+    while (!nodeQueue.empty()) {
+        Node* cursor = nodeQueue.front();
+        nodeQueue.pop();
+
+		output << "\n#### Endereço Binário Índice: " << posicao << " ####" << endl;
+
+        if (cursor->is_leaf) {
+            output << "\nÉ folha!" << endl;
+			output << "Tamanho do nó: " << cursor->size << endl;
+			output << "Endereço do nó: " << cursor << endl;
+			for (int i = 0; i < cursor->size; i++) {
+				output << cursor->key[i];
+				output << " (" << cursor->address[i] << ") | ";
+			}
+        } else {
+            output << "\nNão é folha!" << endl;
+			output << "Tamanho do nó: " << cursor->size << endl;
+			output << "Endereço do nó: " << cursor << endl;
+			for (int i = 0; i < cursor->size; i++) {
+				output << cursor->key[i];
+				output << " (" << cursor->address[i] << ") | ";
+			}
+			output << "\n";
+			for (int i = 0; i < cursor->size+1; i++) {
+				output << BLOCO_SIZE*contador << " ";
+				contador++;
+			}
+        }
+		
+        output << "\n";
+
+		posicao += BLOCO_SIZE;
+
+        if (!cursor->is_leaf) {
+            for (int i = 0; i < cursor->size + 1; i++) {
+                nodeQueue.push(cursor->ptr[i]);
+            }
+        }
+    }
+}
+
+// BPTREE: DISPLAY BSF (Técnica BFS - busca por largura)
+int BPTree::contaBlocosInternos(Node* root) {
+    queue<Node*> nodeQueue;	// Fila de nós 
+    nodeQueue.push(root);	// Adiciona a raiz na fila
+
+	int quantBlocosInternos = 0;	// Quantidade de blocos internos
+
+	// Enquanto a fila não estiver vazia 
+	while (!nodeQueue.empty()) {
+
+		Node* cursor = nodeQueue.front();	// Cursor recebe o primeiro nó da fila
+		nodeQueue.pop();	// Remove o primeiro nó da fila
+
+		if(cursor->is_leaf == true) {
+			break;
+		}
+
+		quantBlocosInternos ++; // Incrementa a quantidade de blocos internos
+
+		// Se o cursor auxiliar não for folha, adiciona os ponteiros do cursor auxiliar na fila
+		if (!cursor->is_leaf) {
+			for (int i = 0; i < cursor->size + 1; i++) {
+				nodeQueue.push(cursor->ptr[i]);
+			}
+		}
+
+	}
+
+	return quantBlocosInternos;
+}
 
 // BPTREE: DISPLAY
 void BPTree::getLeaf(Node* cursor, ofstream& output, fstream& file, int posicao){
@@ -348,4 +467,198 @@ void BPTree::getLeaf(Node* cursor, ofstream& output, fstream& file, int posicao)
 // BPTREE: GET RAIZ DA ÁRVORE
 Node* BPTree::getRoot(){
 	return root;
+} // end
+
+// BPTREE: Funcao que busca o bloco no disco onde a chave será inserida (Técnica BFS - busca por largura)
+int BPTree::buscaBlocoBinario(Node* cursor) {
+	queue<Node*> nodeQueue;	// Fila de nós 
+    nodeQueue.push(root);	// Adiciona a raiz na fila
+
+	int endereco = 0;	// Endereço do bloco no arquivo binário
+	Node* cursorAux;	// Nó auxiliar
+
+	// Enquanto o cursor auxiliar (nó atual) for diferente do cursor (nó que contém a chave a ser inserida)
+	while (cursorAux != cursor) {
+
+		cursorAux = nodeQueue.front();	// Pega o primeiro nó da fila
+		nodeQueue.pop();	// Remove o primeiro nó da fila
+
+		endereco += BLOCO_SIZE;	// Incrementa o endereço do bloco no arquivo binário
+
+		// Se o cursor auxiliar não for folha, adiciona os ponteiros do cursor auxiliar na fila
+		if (!cursorAux->is_leaf) {
+			for (int i = 0; i < cursorAux->size + 1; i++) {
+				nodeQueue.push(cursorAux->ptr[i]);
+			}
+		}
+
+	}
+
+	endereco -= BLOCO_SIZE;	// Decrementa o endereço do bloco no arquivo binário (pois o while incrementa 1 vez a mais)
+	return endereco;
+}
+
+// BPTREE: ALOCA ÁRVORE TIPO 1 - esse tipo de inserção só acontece 1 vez, quando a primeira chave é inserida na árvore
+void BPTree::alocaArvore_tipo1(Node* cursor, fstream& file, ofstream& output){
+
+	if(cursor!=NULL){
+
+		file.seekp(0);	// Vai para o início do arquivo
+		
+		file.write((char*)&cursor->key, sizeof(string));		// Escreve a chave
+		file.write((char*)&cursor->address, sizeof(int));	// Escreve o endereço do arquivo de dados	
+
+	}
+
+} // end
+
+// BPTREE: ALOCA ÁRVORE TIPO 2 - esse tipo de inserção acontece quando uma chave vai ser inserida em um bloco normalmente, sem ocorrer nenhum split
+void BPTree::alocaArvore_tipo2(Node* cursor, string chave, fstream& file, ofstream& output){
+
+	if(cursor!=NULL){
+		
+		// Se o cursor for a raiz (neste caso, como há inserção diretamente na raiz, ela é um bloco folha)
+		if(cursor == getRoot()) {
+
+			file.seekp(0);	// Posiciona o cursor de escrita no byte 0 (início do arquivo e onde sempre será a raiz)
+
+			// Grava a chave e o endereço do arquivo de dados na raiz
+			for(int i = 0; i < cursor->size; i++){
+				file.write((char*)&cursor->key[i], sizeof(string));
+				file.write((char*)&cursor->address[i], sizeof(int));
+				output << "CHAVE " << cursor->key[i] << endl;
+				output << "ENDERECO HASH: " << cursor->address[i] << endl;
+			}
+
+		} 
+		// Se o cursor NÃO for a raiz
+		else {
+			int enderecoBloco = buscaBlocoBinario(cursor);	// Busca o bloco onde a chave será inserida
+
+			file.seekp(enderecoBloco); // Posiciona o cursor de escrita no bloco onde a chave será inserida
+
+			// Grava a chave e o endereço do arquivo de dados no bloco folha
+			for(int i = 0; i < cursor->size; i++){
+				file.write((char*)&cursor->key[i], sizeof(string));
+				file.write((char*)&cursor->address[i], sizeof(int));
+				output << "CHAVE " << cursor->key[i] << endl;
+				output << "ENDERECO HASH: " << cursor->address[i] << endl;
+			}
+
+		}
+	}
+} // end
+
+// BPTREE: ALOCA ÁRVORE TIPO 3 - esse tipo de inserção acontece quando uma chave vai ser inserida em um bloco que já está cheio, ocorrendo um split, que pode ou não interferir na raiz
+void BPTree::alocaArvore_tipo3(Node* root, fstream& file, ofstream& output) {
+    queue<Node*> nodeQueue;	// Fila de nós
+    nodeQueue.push(root);	// Adiciona a raiz na fila
+
+	int posicao = 0; 		// Posição do cursor de escrita no arquivo de índice
+	int cont_endereco = 0;	// Contador que incrementa o endereço do arquivo de índice
+	int endereco_primario;	// Endereço do arquivo de índice que será gravado
+
+	// Enquanto a fila não estiver vazia
+    while (!nodeQueue.empty()) {
+        Node* cursor = nodeQueue.front();	// Seta o cursor com o primeiro elemento da fila
+        nodeQueue.pop();					// Remove o primeiro elemento da fila
+
+        file.seekp(posicao);	// Posiciona o cursor de escrita no byte "posicao"
+
+		// Se o cursor for uma folha
+        if (cursor->is_leaf) {
+
+			// Grava a chave e o endereço do arquivo de dados no bloco
+            for (int i = 0; i < cursor->size; i++) {
+                file.write((char*)&cursor->key[i], sizeof(string));
+                file.write((char*)&cursor->address[i], sizeof(int));
+				output << "CHAVE " << cursor->key[i] << endl;
+				output << "ENDERECO HASH: " << cursor->address[i] << endl;
+            }
+
+        } 
+		// Se o cursor NÃO for uma folha
+		else {
+
+			// Grava a chave e os ponteiros do arquivo de índice no bloco
+            for (int i = 0; i < cursor->size; i++) {
+
+				// Se for a primeira chave do bloco
+                if (i == 0) {
+
+					cont_endereco++;									// Incrementa o contador de endereço
+					endereco_primario = cont_endereco * BLOCO_SIZE;		// Calcula o endereço do arquivo de índice que será gravado
+                    file.write((char*)&endereco_primario, sizeof(int));	// Grava o endereço do arquivo de índice do bloco que guarda valores menores que a chave
+                    file.write((char*)&cursor->key[i], sizeof(string));	// Grava a chave
+
+					cont_endereco++;									// Incrementa o contador de endereço
+					endereco_primario = cont_endereco * BLOCO_SIZE;		// Calcula o endereço do arquivo de índice que será gravado
+                    file.write((char*)&endereco_primario, sizeof(int));	// Grava o endereço do arquivo de índice do bloco que guarda valores maiores que a chave
+
+                } else {
+
+					cont_endereco++;									// Incrementa o contador de endereço
+					endereco_primario = cont_endereco * BLOCO_SIZE;		// Calcula o endereço do arquivo de índice que será gravado
+                    file.write((char*)&cursor->key[i], sizeof(string));	// Grava a chave
+                    file.write((char*)&endereco_primario, sizeof(int));	// Grava o endereço do arquivo de índice do bloco que guarda valores maiores que a chave
+
+                }
+            }
+        }
+
+		posicao += BLOCO_SIZE;	// Incrementa a posição do cursor de escrita no arquivo de índice
+
+		if(cursor->is_leaf != true){
+			// Para todos os ponteiros do cursor
+			for (int i = 0; i < cursor->size+1; i++) {
+                nodeQueue.push(cursor->ptr[i]);	// Adiciona o ponteiro na fila
+            }
+		}
+    }
+}
+
+// BPTREE: alocaArvore
+void BPTree::alocaArvore(Node* cursor, fstream& file, ofstream& output){
+
+	if(cursor!=NULL){
+		output << "\n-----------------------" << endl;
+
+		if(cursor == getRoot()){output << "RAIZ AQUIIIIIIIIIIIIII" << endl;}
+		if (cursor->is_leaf == true) {output << "É folha!" << endl;} 
+		else {output << "Não é folha!" << endl;}
+
+		output << "Tamanho do nó: " << cursor->size << endl;
+		output << "Endereço do nó: " << cursor << endl;
+
+		for(int i = 0; i < cursor->size; i++){
+			// Se for a raiz, printa as chaves e os ponteiros
+			if(cursor->is_leaf == false){ 
+				// Se for a primeira chave, printa o ponteiro anterior à chave e o ponteiro posterior à chave 
+				if(i == 0) {
+					output << "- PONTEIRO: " << cursor->ptr[i] << endl;
+					output << "- CHAVE: " << cursor->key[i] << endl;
+					output << "- PONTEIRO: " << cursor->ptr[i+1] << endl;
+				}
+				// Caso contrário, printa a chave e o ponteiro posterior à chave
+				else {
+					output << "- CHAVE: " << cursor->key[i] << endl;
+					output << "- PONTEIRO: " << cursor->ptr[i+1] << endl;
+				}
+			}
+			// Se não for a raiz, printa as chaves e os endereços do arquivo de dados
+			else {
+				output << "- CHAVE: " << cursor->key[i] << endl;
+				output << "- ENDERECO HASH: " << cursor->address[i] << endl;
+			}
+				
+		}
+
+		// if(cursor->is_leaf != true){
+		// 	for(int i = 0; i < cursor->size+1; i++){
+		// 		output << "\n======== OUTRO NÓ SENDO CHAMADO ========\n" << endl;
+		// 		alocaArvore(cursor->ptr[i], file, output);
+		// 	}
+		// }
+	}
+    
 } // end
