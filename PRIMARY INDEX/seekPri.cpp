@@ -29,13 +29,54 @@ int main() {
     int blocos_lidos = 0;
 
     // Busca o registro no arquivo de índice primário
-    bool encontrado = false;
-    while (!encontrado && fread(&registro, sizeof(Registro), 1, indice) == 1) {
-        blocos_lidos++;
-        if (registro.id == id) {
-            encontrado = true;
+    // Função para buscar um registro em um nó folha
+bool search_leaf_node(FILE* indice, int id, long int node_pointer, registro_t& registro, int& blocos_lidos) {
+    // Leitura do nó da árvore B+
+    fseek(indice, node_pointer, SEEK_SET);
+    node_t node;
+    fread(&node, sizeof(node_t), 1, indice);
+    blocos_lidos++;
+
+    // Verificação se o nó é folha
+    if (node.is_leaf) {
+        // Busca sequencial das chaves no nó folha
+        for (int i = 0; i < node.num_keys; i++) {
+            fseek(indice, node.pointers[i], SEEK_SET);
+            registro_t temp_registro;
+            fread(&temp_registro, sizeof(registro_t), 1, indice);
+            blocos_lidos++;
+
+            // Verificação se o ID do registro é igual ao ID informado
+            if (temp_registro.id == id) {
+                registro = temp_registro;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Busca recursiva no filho correto
+    int i;
+    for (i = 0; i < node.num_keys; i++) {
+        if (id < node.keys[i]) {
+            break;
         }
     }
+
+    return search_leaf_node(indice, id, node.pointers[i], registro, blocos_lidos);
+}
+
+// Função para buscar um registro no arquivo de índice primário com árvore B+
+bool search_index_file(FILE* indice, int id, registro_t& registro, int& blocos_lidos) {
+    // Leitura do cabeçalho do arquivo de índice primário
+    fseek(indice, 0, SEEK_SET);
+    int root_node_pointer;
+    fread(&root_node_pointer, sizeof(int), 1, indice);
+
+    // Busca recursiva na árvore B+ a partir do nó raiz
+    return search_leaf_node(indice, id, root_node_pointer, registro, blocos_lidos);
+}
 
     // Fecha o arquivo de índice primário
     fclose(indice);
