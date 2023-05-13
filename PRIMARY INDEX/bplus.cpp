@@ -37,7 +37,6 @@ void ler_arquivo_binario() {
         cout << "Endereço do bloco atual: " << endereco_atual << endl;
 
         for (int j = 0; j < NUMBER_OF_REGISTROS; j++) {
-			// bpt.insert(bloco_lido.registros[j].id, endereco_atual);
             if (bloco_lido.registros[j].id > 0 && bloco_lido.registros[j].id <= MAX_ID){
                 registros[cont] = bloco_lido.registros[j].id;
                 enderecos[cont] = endereco_atual;
@@ -70,50 +69,116 @@ int main(int argc, char* argv[]){
 
     // ================== LENDO ARVORE ==================
 
-    ofstream arqMostra("mostraArvore.txt");
+    ofstream arqMostra("mostraArvoreBFS.txt");
 
     cout << "Lendo arvore ..." << endl;
-    bpt.display(bpt.getRoot(), arqMostra);
+    bpt.displayBFS(bpt.getRoot(), arqMostra);
 
     arqMostra.close();    
 
+    // ================== LENDO ARVORE (DFS TESTE) ==================
+
+    ofstream dfs("mostraArvoreDFS.txt");
+
+    cout << "Lendo arvore DFS..." << endl;
+    bpt.display(bpt.getRoot(), dfs, 0, 1);
+
+    dfs.close(); 
+
     // =============== LENDO ARQUIVO DE INDICE PRIMARIO =================
 
-    // cout << "Lendo arquivo de indice primario ..." << endl;
+    cout << "Lendo arquivo de indice primario ..." << endl;
 
-    // ifstream arquivo("arquivo_indice_primario.bin", ios::in | ios::binary);
-    // ofstream output2("pares.txt");
+    ifstream arquivo("arquivo_indice_primario.bin", ios::in | ios::binary);
+    ofstream output2("leitura.txt");
 
-    // int par_size = 2 * sizeof(int); // tamanho do par (id, endereco)
+    arquivo.seekg(0, ios::end);
+    int tamanho_arquivo = arquivo.tellg();
 
-    // output2 << "Tamanho do par: " << par_size << endl;
+    arquivo.seekg(0);
+    int endereco_atual;
 
-    // arquivo.seekg(0, ios::end);
-    // int tamanho_arquivo = arquivo.tellg();
+    int num_blocos = tamanho_arquivo / BLOCO_SIZE;
+    output2 << "Tamanho do arquivo: " << tamanho_arquivo << endl;
+    output2 << "Número de BLOCOS: " << num_blocos << endl;
 
-    // arquivo.seekg(0);
-    // int endereco_atual;
+    int quant_blocos_iternos = bpt.contaBlocosInternos(bpt.getRoot());
 
-    // int num_pares = tamanho_arquivo / par_size;
-    // output2 << "Tamanho do arquivo: " << tamanho_arquivo << endl;
-    // output2 << "Numero de pares: " << num_pares << endl;
+    output2 << "Quantidade de blocos internos: " << quant_blocos_iternos << endl;
+    output2 << "\n\n" << endl;
 
-    // for (int i = 0; i < num_pares; i++) {
-    //     int par_lido[2];
-    //     arquivo.read((char*)&par_lido, par_size);
-    //     arquivo.clear();
-    //     endereco_atual = par_size * i;
+    for (int i = 0; i < num_blocos; i++) {
+        endereco_atual = BLOCO_SIZE * i;
+        arquivo.seekg(endereco_atual);
 
-    //     output2 << "============ PAR " << i+1 << " ============" << endl;
-    //     output2 << "-> Endereço do par atual: " << endereco_atual << endl;
+        if(i >= 0 && i < quant_blocos_iternos) {
+            output2 << "============ BLOCO " << i << " - INTERNO ============" << endl;
+            output2 << "-> Endereço do bloco atual: " << endereco_atual << endl;
 
-    //     output2 << "ID: " << par_lido[0] << endl;
-    //     output2 << "Endereço: " << par_lido[1] << "\n" << endl;
-    // }
-    // output2.close();
-    // arquivo.close();
+            int quant_chaves = MAX;
+            int quant_enderecos = MAX + 1;
+            
+            int endereco;
+            int chave;
 
-    // cout << "Arquivo de indice primario lido!" << endl;
+            for(int i = 0; i < (quant_chaves + quant_enderecos); i++) {
+                if(i == 0) {
+
+                    arquivo.read((char*)&endereco, sizeof(int));
+                    arquivo.clear();
+                    output2 << "Endereço Índice: " << endereco << endl;
+
+                    arquivo.read((char*)&chave, sizeof(int));
+                    arquivo.clear();
+                    output2 << "Chave: " << chave << endl;
+
+                    arquivo.read((char*)&endereco, sizeof(int));
+                    arquivo.clear();
+                    output2 << "Endereço Índice: " << endereco << endl;
+
+                } 
+                else {
+
+                    arquivo.read((char*)&chave, sizeof(int));
+                    arquivo.clear();
+                    output2 << "Chave: " << chave << endl;
+
+                    arquivo.read((char*)&endereco, sizeof(int));
+                    arquivo.clear();
+                    output2 << "Endereço Índice: " << endereco << endl;
+
+                }
+            }
+
+        } 
+        else {
+            output2 << "============ BLOCO " << i << " - FOLHA ============" << endl;
+            output2 << "-> Endereço do bloco atual: " << endereco_atual << endl;
+
+            int quant_chaves = MAX;
+            int quant_enderecos = MAX;
+            
+            int endereco;
+            int chave;
+
+            for(int i = 0; i < (quant_chaves + quant_enderecos); i++) {
+
+                arquivo.read((char*)&chave, sizeof(int));
+                arquivo.clear();
+                output2 << "Chave: " << chave << endl;
+
+                arquivo.read((char*)&endereco, sizeof(int));
+                arquivo.clear();
+                output2 << "Endereço Hash: " << endereco << endl;
+
+            }
+        }
+    }
+
+    output2.close();
+    arquivo.close();
+
+    cout << "Arquivo de indice primario lido!" << endl;
 
     cout << "Buscando registros ..." << endl;
 
@@ -122,8 +187,8 @@ int main(int argc, char* argv[]){
 	bpt.search(725886);     
     bpt.search(554);    
     bpt.search(555);  
-    cout << sizeof(bloco_interno_t) << endl;
-    cout << sizeof(bloco_folha_t) << endl;
+    cout << sizeof(bloco_interno_t) << endl; //4084
+    cout << sizeof(bloco_folha_t) << endl;  //4080
     cout << "MAX definido: " << MAX << endl;      
 	return 0;
 }
