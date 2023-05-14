@@ -178,7 +178,7 @@ int main(int argc, char* argv[]){
             int endereco;
             int chave;
 
-            for(int i = 0; i < (quant_chaves + quant_enderecos); i++) {
+            for(int i = 0; i < quant_chaves; i++) {
 
                 if(i == 0) {
                     arquivo.read((char*)&tipo_bloco, sizeof(int));
@@ -210,17 +210,8 @@ int main(int argc, char* argv[]){
     output2.close();
     arquivo.close();
 
-    cout << "Arquivo de indice primario lido!" << endl;
+    cout << "Arquivo de indice primario lido!" << endl; 
 
-    cout << "Buscando registros ..." << endl;
-
-	bpt.search(552);       
-	bpt.search(1549146);    
-	bpt.search(725886);     
-    bpt.search(554);    
-    bpt.search(555);  
-    cout << sizeof(bloco_interno_t) << endl; //4084
-    cout << sizeof(bloco_folha_t) << endl;  //4080
     cout << "MAX definido: " << MAX << endl;      
 	return 0;
 }

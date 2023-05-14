@@ -2,8 +2,6 @@
 #include <fstream>
 #include <cstring>
 #include <sstream>
-#include <vector>
-#include "bplustree.h"
 #include "structs.h"
 
 using namespace std;
@@ -130,7 +128,7 @@ void buscaChaveIndice(ifstream &arquivo, int ID, ifstream &arquivo_dados) {
                 arquivo.clear();
 
                 if(ID < chave) {
-                    break;  // se a chave for menor que a chave atual, para o loop (endereço salvo no endereco_atual)
+                    break;  // se o ID for menor que a chave atual, para o loop (endereço salvo no endereco_atual)
                 }
 
                 // Se for o penúltimo campo do bloco (que é um campo chave) e o ID for maior ou igual a chave
@@ -170,6 +168,7 @@ void buscaChaveIndice(ifstream &arquivo, int ID, ifstream &arquivo_dados) {
         arquivo.read((char*)&endereco_dados, sizeof(int));   // lê o endereço
         arquivo.clear();
 
+        // Se o ID for igual a chave, para o loop
         if(ID == chave) {
             break;
         }
@@ -189,10 +188,10 @@ int main(int argc, char *argv[]) {
     cout << ">>> Programa que busca por um registro pesquisando através do arquivo de índice primário <<<\n" << endl;
 
     int ID = atoi(argv[1]);                                                     // ID do registro a ser buscado
-    ifstream arquivoDados("arquivo_dados5000.bin", ios::in | ios::binary);     // arquivo de índice
+    ifstream arquivoDados("arquivo_dados5000.bin", ios::in | ios::binary);     // arquivo de dados
     ifstream arquivoIndice("arquivo_indice_primario.bin", ios::in | ios::binary);     // arquivo de índice
 
     cout << "Buscando pelo registro de ID " << ID << " ..." << endl;
 
-    buscaChaveIndice(arquivoIndice, ID, arquivoDados);
+    buscaChaveIndice(arquivoIndice, ID, arquivoDados);  // busca pelo registro no arquivo de índice
 }
