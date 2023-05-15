@@ -1,117 +1,84 @@
 #include <iostream>
-#include "bplustree.h"
-#include "structs.h"
+#include "bplustree_pri.h"
+#include "structs_pri.h"
 
 using namespace std;
 
-BPTree bpt;
+BPTree bpt; // B+ Tree
 
-int registros[MAX_ID];  // se preciso, mudar MAX_ID no arquivo structs.h
-int enderecos[MAX_ID];  // se preciso, mudar MAX_ID no arquivo structs.h
-int cont = 0;
+int registros[MAX_ID];  // vetor de IDs
+int enderecos[MAX_ID];  // vetor de endereços
+int cont = 0;           // contador dos vetores de registros e endereços
 
-void ler_arquivo_binario() {
-    ifstream arquivo("arquivo_dados5000.bin", ios::in | ios::binary);
+// Função para ler o arquivo de dados e armazenar os IDs e endereços em vetores
+void ler_arquivo_dados() {
+    ifstream arquivo("arquivo_dados5000.bin", ios::in | ios::binary);   // abre o arquivo de dados
 
     if (!arquivo) {
         cerr << "Erro ao abrir o arquivo!" << endl;
         return;
     }
 
-    int bloco_size = sizeof(bloco_t);
-
     arquivo.seekg(0, ios::end);
-    int tamanho_arquivo = arquivo.tellg();
+    int tamanho_arquivo = arquivo.tellg();  // tamanho do arquivo em bytes
+
     arquivo.seekg(0);
-
     int endereco_atual;
+    int num_blocos = tamanho_arquivo / BLOCO_SIZE;  // número de blocos do arquivo
 
-    int num_blocos = tamanho_arquivo / bloco_size;
+    // Percorre todos os blocos do arquivo de dados
     for (int i = 0; i < num_blocos; i++) {
-        bloco_t bloco_lido;
-        arquivo.read((char*)&bloco_lido, bloco_size);
+
+        bloco_t bloco_lido;                             // bloco que será lido do arquivo
+        arquivo.read((char*)&bloco_lido, BLOCO_SIZE);   // lê um bloco do arquivo
         arquivo.clear();
-        endereco_atual = BLOCO_SIZE * i;
 
-        cout << "============ BLOCO " << i << " ============" << endl;
-        cout << "Endereço do bloco atual: " << endereco_atual << endl;
+        endereco_atual = BLOCO_SIZE * i;    // endereço do bloco atual
 
+        // Percorre todos os registros do bloco lido
         for (int j = 0; j < NUMBER_OF_REGISTROS; j++) {
-            if (bloco_lido.registros[j].id > 0 && bloco_lido.registros[j].id <= MAX_ID){
-                registros[cont] = bloco_lido.registros[j].id;
-                enderecos[cont] = endereco_atual;
-                cout << "ID: " << bloco_lido.registros[j].id << endl;
+
+            if (bloco_lido.registros[j].id > 0 && bloco_lido.registros[j].id <= MAX_ID){    // se o ID for válido
+
+                registros[cont] = bloco_lido.registros[j].id;   // armazena o ID no vetor de IDs
+                enderecos[cont] = endereco_atual;               // armazena o endereço no vetor de endereços
+
             }
-            cont++;
+
+            cont++; // incrementa o contador de registros
         }
     }
-    arquivo.close();
+
+    arquivo.close();    // fecha o arquivo de dados
 }
 
-int main(int argc, char* argv[]){
-	ler_arquivo_binario();
+// Função para ler o arquivo de índice primário e imprimir os dados em um arquivo texto (output_pri.txt)
+void ler_arquivo_primario() {
+    ifstream arquivo("arquivo_indice_primario.bin", ios::in | ios::binary); // abre o arquivo de índice primário para leitura
+    ofstream output2("output_pri.txt"); // abre o arquivo de texto
 
-    cout << "=====================" << endl;
-    fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);
-    ofstream output("alocaArvore.txt");
+    arquivo.seekg(0, ios::end);             // vai para o final do arquivo
+    int tamanho_arquivo = arquivo.tellg();  // tamanho do arquivo em bytes
 
-    for (int i = 0; i < cont; i++){
-        bpt.insert(registros[i], enderecos[i], file, output);
-        cout << registros[i] << "(" << enderecos[i] << ")" << endl;
-    }
-
-    cout << "ALOCA ARVORE FEITO" << endl;
-    
-    output.close();
-    file.close();
-
-    cout << "=====================" << endl;
-
-    // ================== LENDO ARVORE ==================
-
-    ofstream arqMostra("mostraArvoreBFS.txt");
-
-    cout << "Lendo arvore ..." << endl;
-    bpt.displayBFS(bpt.getRoot(), arqMostra);
-
-    arqMostra.close();    
-
-    // ================== LENDO ARVORE (DFS TESTE) ==================
-
-    ofstream dfs("mostraArvoreDFS.txt");
-
-    cout << "Lendo arvore DFS..." << endl;
-    bpt.display(bpt.getRoot(), dfs, 0, 1);
-
-    dfs.close(); 
-
-    // =============== LENDO ARQUIVO DE INDICE PRIMARIO =================
-
-    cout << "Lendo arquivo de indice primario ..." << endl;
-
-    ifstream arquivo("arquivo_indice_primario.bin", ios::in | ios::binary);
-    ofstream output2("leitura.txt");
-
-    arquivo.seekg(0, ios::end);
-    int tamanho_arquivo = arquivo.tellg();
-
-    arquivo.seekg(0);
+    arquivo.seekg(0);   // volta para o início do arquivo
     int endereco_atual;
 
     int num_blocos = tamanho_arquivo / BLOCO_SIZE;
     output2 << "Tamanho do arquivo: " << tamanho_arquivo << endl;
-    output2 << "Número de BLOCOS: " << num_blocos << endl;
+    output2 << "Número de blocos no arquivo: " << num_blocos << endl;
 
-    int quant_blocos_iternos = bpt.contaBlocosInternos(bpt.getRoot());
+    int quant_blocos_iternos = bpt.contaBlocosInternos(bpt.getRoot());  // quantidade de blocos internos
 
-    output2 << "Quantidade de blocos internos: " << quant_blocos_iternos << endl;
     output2 << "\n\n" << endl;
 
+    // Percorre todos os blocos do arquivo de índice primário
     for (int i = 0; i <= num_blocos; i++) {
-        endereco_atual = BLOCO_SIZE * i;
-        arquivo.seekg(endereco_atual);
-
+        endereco_atual = BLOCO_SIZE * i;    // endereço do bloco atual
+        arquivo.seekg(endereco_atual);      // vai para o endereço do bloco atual
+        
+        // Se o bloco for interno
         if(i >= 0 && i < quant_blocos_iternos) {
+
             output2 << "============ BLOCO " << i << " - INTERNO ============" << endl;
             output2 << "-> Endereço do bloco atual: " << endereco_atual << "\n" << endl;
 
@@ -123,42 +90,45 @@ int main(int argc, char* argv[]){
             int endereco;
             int chave;
 
+            // Percorre todas as chaves e endereços do bloco
             for(int i = 0; i < (quant_chaves + quant_enderecos); i++) {
+
+                // Se for a primeira chave/endereço do bloco
                 if(i == 0) {
 
-                    arquivo.read((char*)&tipo_bloco, sizeof(int));
+                    arquivo.read((char*)&tipo_bloco, sizeof(int));  // lê o tipo do bloco
                     arquivo.clear();
 
-                    if(tipo_bloco == 0) {
+                    if(tipo_bloco == 0) {   // se o tipo do bloco for 0, é um bloco interno
                         output2 << "Tipo do bloco: Interno" << endl;
-                    } else if (tipo_bloco == 1) {
+                    } else if (tipo_bloco == 1) {   // se o tipo do bloco for 1, é um bloco folha
                         output2 << "Tipo do bloco: Folha" << endl;
                     }
 
-                    arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));
+                    arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));   // lê a quantidade de chaves no bloco
                     arquivo.clear();
                     output2 << "Quantidade de Chaves no bloco: " << quant_chaves_no_bloco << endl;
 
-                    arquivo.read((char*)&endereco, sizeof(int));
+                    arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores menores que a chave)
                     arquivo.clear();
                     output2 << "Endereço Índice: " << endereco << endl;
 
-                    arquivo.read((char*)&chave, sizeof(int));
+                    arquivo.read((char*)&chave, sizeof(int));   // lê a chave
                     arquivo.clear();
                     output2 << "Chave: " << chave << endl;
 
-                    arquivo.read((char*)&endereco, sizeof(int));
+                    arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores maiores que a chave)
                     arquivo.clear();
                     output2 << "Endereço Índice: " << endereco << endl;
 
                 } 
                 else {
 
-                    arquivo.read((char*)&chave, sizeof(int));
+                    arquivo.read((char*)&chave, sizeof(int));   // lê a chave
                     arquivo.clear();
                     output2 << "Chave: " << chave << endl;
 
-                    arquivo.read((char*)&endereco, sizeof(int));
+                    arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores maiores que a chave)
                     arquivo.clear();
                     output2 << "Endereço Índice: " << endereco << endl;
 
@@ -166,6 +136,7 @@ int main(int argc, char* argv[]){
             }
 
         } 
+        // Se o bloco for folha
         else {
             output2 << "============ BLOCO " << i << " - FOLHA ============" << endl;
             output2 << "-> Endereço do bloco atual: " << endereco_atual << endl;
@@ -178,28 +149,30 @@ int main(int argc, char* argv[]){
             int endereco;
             int chave;
 
+            // Percorre todas as chaves e endereços do bloco
             for(int i = 0; i < quant_chaves; i++) {
-
+                
+                // Se for a primeira chave/endereço do bloco
                 if(i == 0) {
-                    arquivo.read((char*)&tipo_bloco, sizeof(int));
+                    arquivo.read((char*)&tipo_bloco, sizeof(int));  // lê o tipo do bloco
                     arquivo.clear();
 
-                    if(tipo_bloco == 0) {
+                    if(tipo_bloco == 0) {   // se o tipo do bloco for 0, é um bloco interno
                         output2 << "Tipo do bloco: Interno" << endl;
-                    } else if (tipo_bloco == 1) {
+                    } else if (tipo_bloco == 1) {   // se o tipo do bloco for 1, é um bloco folha
                         output2 << "Tipo do bloco: Folha" << endl;
                     }
 
-                    arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));
+                    arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));   // lê a quantidade de chaves no bloco
                     arquivo.clear();
                     output2 << "Quantidade de Chaves no bloco: " << quant_chaves_no_bloco << endl;
                 }
 
-                arquivo.read((char*)&chave, sizeof(int));
+                arquivo.read((char*)&chave, sizeof(int));   // lê a chave
                 arquivo.clear();
                 output2 << "Chave: " << chave << endl;
 
-                arquivo.read((char*)&endereco, sizeof(int));
+                arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (aponta para o arquivo de dados)
                 arquivo.clear();
                 output2 << "Endereço Hash: " << endereco << endl;
 
@@ -207,11 +180,66 @@ int main(int argc, char* argv[]){
         }
     }
 
-    output2.close();
-    arquivo.close();
+    output2.close();    // fecha o arquivo de saída
+    arquivo.close();    // fecha o arquivo de índice
+}
 
-    cout << "Arquivo de indice primario lido!" << endl; 
+int main(int argc, char* argv[]){
 
-    cout << "MAX definido: " << MAX << endl;      
+    // ================== LENDO ARQUIVO DE DADOS E CRIANDO VETORES DE ID'S E ENDEREÇOS ==================
+
+    cout << "Lendo arquivo de dados ..." << endl;
+
+	ler_arquivo_dados();   // lê o arquivo de dados e armazena os IDs e endereços em vetores
+
+    cout << "Arquivo de dados lido!" << endl;
+    cout << "============================================" << endl;
+
+    // ================== INSERINDO REGISTROS NA ÁRVORE E NO ARQUIVO DE ÍNDICE ==================
+
+    fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);    // abre o arquivo de índice primário para escrita
+
+    cout << "\nInserindo registros na árvore ..." << endl;
+
+    // Para cada posição dos vetores de registros e endereços
+    for (int i = 0; i < cont; i++){
+
+        bpt.insert(registros[i], enderecos[i], file);   // insere o registro na árvore 
+
+    }
+
+    cout << "Inserção Concluída!\n" << endl;
+
+    file.close();   // fecha o arquivo de índice primário
+
+    cout << "============================================" << endl;
+
+    // ================== FAZ A LEITURA DA ÁRVORE E MOSTRA EM UM ARQUIVO TEXTO ==================
+
+    ofstream arqMostra("arvore_pri.txt");
+
+    cout << "\nLendo árvore em um arquivo texto ..." << endl;
+
+    bpt.displayBFS(bpt.getRoot(), arqMostra);   // mostra a árvore em um arquivo texto
+
+    cout << "Árvore lida!" << endl;
+    cout << "Abra o arquivo arvore_pri.txt para verificar a leitura! :D\n" << endl;
+
+    arqMostra.close();  // fecha o arquivo texto
+
+    cout << "============================================" << endl;
+
+    // =============== LENDO ARQUIVO DE INDICE PRIMARIO =================
+
+    cout << "\nLendo arquivo de índice primário ..." << endl;
+
+    ler_arquivo_primario(); // lê o arquivo de índice primário e printa no arquivo de texto (output_pri.txt)
+
+    cout << "Arquivo de índice primário lido!" << endl; 
+    cout << "Abra o arquivo output_pri.txt para verificar a leitura! :D\n" << endl;
+    
+    cout << "============================================\n" << endl;
+
+    cout << "Número máximo de chaves por bloco: " << MAX << endl;      
 	return 0;
 }
