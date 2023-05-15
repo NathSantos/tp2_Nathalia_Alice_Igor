@@ -69,17 +69,19 @@ void ler_arquivo_primario() {
 
     int quant_blocos_iternos = bpt.contaBlocosInternos(bpt.getRoot());  // quantidade de blocos internos
 
-    output2 << "\n\n" << endl;
+    output2 << "\n" << endl;
 
     // Percorre todos os blocos do arquivo de índice primário
     for (int i = 0; i <= num_blocos; i++) {
         endereco_atual = BLOCO_SIZE * i;    // endereço do bloco atual
         arquivo.seekg(endereco_atual);      // vai para o endereço do bloco atual
+
+        int cont_verificador_chaves = 0;    // contador para verificar se já foram lidas todas as chaves presentes no bloco
         
         // Se o bloco for interno
         if(i >= 0 && i < quant_blocos_iternos) {
 
-            output2 << "============ BLOCO " << i << " - INTERNO ============" << endl;
+            output2 << "\n============ BLOCO " << i << " - INTERNO ============" << endl;
             output2 << "-> Endereço do bloco atual: " << endereco_atual << "\n" << endl;
 
             int quant_chaves = MAX;
@@ -107,7 +109,7 @@ void ler_arquivo_primario() {
 
                     arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));   // lê a quantidade de chaves no bloco
                     arquivo.clear();
-                    output2 << "Quantidade de Chaves no bloco: " << quant_chaves_no_bloco << endl;
+                    output2 << "Quantidade de Chaves no bloco: " << quant_chaves_no_bloco << "\n" << endl;
 
                     arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores menores que a chave)
                     arquivo.clear();
@@ -124,21 +126,26 @@ void ler_arquivo_primario() {
                 } 
                 else {
 
-                    arquivo.read((char*)&chave, sizeof(int));   // lê a chave
-                    arquivo.clear();
-                    output2 << "Chave: " << chave << endl;
+                        arquivo.read((char*)&chave, sizeof(int));   // lê a chave
+                        arquivo.clear();
 
-                    arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores maiores que a chave)
-                    arquivo.clear();
-                    output2 << "Endereço Índice: " << endereco << endl;
+                        if (cont_verificador_chaves >= 0 && cont_verificador_chaves < quant_chaves_no_bloco) {   // se a chave for válida (verificação para não printar lixo de memória)
+                            
+                            output2 << "Chave: " << chave << endl;
 
+                            arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores maiores que a chave)
+                            arquivo.clear();
+                            output2 << "Endereço Índice: " << endereco << endl;
+
+                        }
                 }
-            }
 
+                cont_verificador_chaves++;  // incrementa o contador de chaves
+            }
         } 
         // Se o bloco for folha
         else {
-            output2 << "============ BLOCO " << i << " - FOLHA ============" << endl;
+            output2 << "\n============ BLOCO " << i << " - FOLHA ============" << endl;
             output2 << "-> Endereço do bloco atual: " << endereco_atual << endl;
 
             int quant_chaves = MAX;
@@ -158,24 +165,29 @@ void ler_arquivo_primario() {
                     arquivo.clear();
 
                     if(tipo_bloco == 0) {   // se o tipo do bloco for 0, é um bloco interno
-                        output2 << "Tipo do bloco: Interno" << endl;
+                        output2 << "\nTipo do bloco: Interno" << endl;
                     } else if (tipo_bloco == 1) {   // se o tipo do bloco for 1, é um bloco folha
-                        output2 << "Tipo do bloco: Folha" << endl;
+                        output2 << "\nTipo do bloco: Folha" << endl;
                     }
 
                     arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));   // lê a quantidade de chaves no bloco
                     arquivo.clear();
-                    output2 << "Quantidade de Chaves no bloco: " << quant_chaves_no_bloco << endl;
+                    output2 << "Quantidade de Chaves no bloco: " << quant_chaves_no_bloco << "\n" << endl;
                 }
 
                 arquivo.read((char*)&chave, sizeof(int));   // lê a chave
                 arquivo.clear();
-                output2 << "Chave: " << chave << endl;
 
-                arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (aponta para o arquivo de dados)
-                arquivo.clear();
-                output2 << "Endereço Hash: " << endereco << endl;
+                if (cont_verificador_chaves >= 0 && cont_verificador_chaves < quant_chaves_no_bloco) {   // se a chave for válida (verificação para não printar lixo de memória)
 
+                    output2 << "Chave: " << chave << endl;
+
+                    arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (aponta para o arquivo de dados)
+                    arquivo.clear();
+                    output2 << "Endereço Hash: " << endereco << endl;
+                }
+
+                cont_verificador_chaves++;  // incrementa o contador de chaves
             }
         }
     }

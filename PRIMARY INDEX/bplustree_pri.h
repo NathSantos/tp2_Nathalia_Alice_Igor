@@ -326,17 +326,21 @@ void BPTree::displayBFS(Node* root, ofstream& output) {
 	int posicao = 0;	// Posição do bloco (nó) no arquivo de índice
 	int contador = 1;	// Contador de nós
 
+	output << "================================= ÁRVORE B+ ===================================" << endl;
+	output << "\n!!! OS NÚMEROS DENTRO DOS PARÊNTESES SÃO ENDEREÇOS, AS CHAVES ESTÃO FORA !!! \n" << endl;
+	output << "===============================================================================\n\n" << endl;
+
 	// Enquanto a fila não estiver vazia
     while (!nodeQueue.empty()) {
         Node* cursor = nodeQueue.front();	// Pega primeiro nó da fila
         nodeQueue.pop();					// Remove primeiro nó da fila
 
-		output << "\n#### Endereço Binário Índice: " << posicao << " ####" << endl;
+		output << "\n#### Este nó corresponde ao seguinte endereço no arquivo de índice: " << posicao << " ####" << endl;
 
 		// Se cursor for folha
         if (cursor->is_leaf) {
 
-            output << "\nÉ folha!" << endl;
+            output << "\n-> NÓ FOLHA!" << endl;
 			output << "Quantidade de chaves no nó: " << cursor->size << endl;
 			output << "Endereço do nó: " << cursor << endl;
 
@@ -353,26 +357,36 @@ void BPTree::displayBFS(Node* root, ofstream& output) {
 		// Se cursor não for folha
 		else {
 
-            output << "\nNão é folha!" << endl;
+            output << "\n-> NÓ INTERNO!" << endl;
 			output << "Quantidade de chaves no nó: " << cursor->size << endl;
 			output << "Endereço do nó: " << cursor << endl;
 
-			for (int i = 0; i < cursor->size; i++) {					// Percorre chaves do nó e printa elas
+			for (int i = 0; i < cursor->size+1; i++) {					// Percorre chaves do nó e printa elas
 				if (cursor->key[i] > 0 && cursor->key[i] <= MAX_ID) {	// Se chave for válida
-					output << cursor->key[i] << " ";
+
+					if(i == 0) {
+						output << "(" << BLOCO_SIZE*contador << ") ";
+						contador++;
+
+						output << cursor->key[i] << " ";
+
+						output << "(" << BLOCO_SIZE*contador << ") ";
+						contador++;
+
+					}
+
+					else {
+						output << cursor->key[i] << " ";
+
+						output << "(" << BLOCO_SIZE*contador << ") ";
+						contador++;
+					}
 				}
-			}
-
-			output << "\n";
-
-			for (int i = 0; i < cursor->size+1; i++) {	// Percorre ponteiros do nó 
-				output << BLOCO_SIZE*contador << " ";
-				contador++;								// Incrementa contador de nós
 			}
 
         }
 		
-        output << "\n";
+        output << "\n\n";
 
 		posicao += BLOCO_SIZE;	// Incrementa posição do bloco (nó) no arquivo de índice
 
