@@ -2,11 +2,15 @@
 #include <fstream>
 #include <cstring>
 #include <sstream>
-#include "structs.h"
+#include "structs_pri.h"
 
 using namespace std;
 
-// Função que conta a quantidade de blocos no arquivo 
+// ===============================================================================
+// ============================    FUNÇÕES DE BUSCA    ===========================
+// ===============================================================================
+
+// Função que conta a quantidade de blocos no arquivo
 int contaBlocos(ifstream &arquivo) {
     arquivo.seekg(0, ios::end);
     int tamanho_arquivo = arquivo.tellg();
@@ -16,19 +20,20 @@ int contaBlocos(ifstream &arquivo) {
     return num_blocos;
 }
 
-// Função que busca um registro no arquivo de dados
+// Função que busca um registro no bloco do arquivo de dados localizado no endereco passado como parâmetro
 void buscaArquivoDados(int ID, int endereco, int quantidade_blocos_lidos, ifstream &arquivo_dados, ifstream &arquivo_indice) {
 
-    arquivo_dados.seekg(endereco);
+    arquivo_dados.seekg(endereco);  // vai para o endereço do bloco no arquivo de dados
 
     bloco_t bloco_lido;
-    arquivo_dados.read((char*)&bloco_lido, BLOCO_SIZE);
+    arquivo_dados.read((char*)&bloco_lido, BLOCO_SIZE); // lê o bloco do arquivo de dados
     arquivo_dados.clear();
 
     quantidade_blocos_lidos++; // incrementa a quantidade de blocos lidos (+1 contando com esse bloco do arquivo de dados)
 
     // Verifica se o registro é o primeiro ou o segundo do bloco
     if(bloco_lido.registros[0].id == ID) {
+
         cout << "Registro encontrado!" << endl; 
         cout << "\nEndereço do bloco no arquivo de dados: " << endereco << endl;
         cout << "--------------- Campos do Registro ---------------" << endl;
@@ -44,8 +49,11 @@ void buscaArquivoDados(int ID, int endereco, int quantidade_blocos_lidos, ifstre
         cout << "Quantidade de blocos lidos (arquivo de índice +1 bloco do arquivo de dados): " << quantidade_blocos_lidos << endl;     
         cout << "Quantidade de blocos totais no arquivo: " << contaBlocos(arquivo_indice) << endl;
         cout << "--------------------------------------------------" << endl;
+
         return;
+
     } else if(bloco_lido.registros[1].id == ID) {
+
         cout << "Registro encontrado!" << endl; 
         cout << "\nEndereço do bloco no arquivo de dados: " << endereco << endl;
         cout << "----------------------------------------" << endl;
@@ -61,9 +69,13 @@ void buscaArquivoDados(int ID, int endereco, int quantidade_blocos_lidos, ifstre
         cout << "Quantidade de blocos lidos (arquivo de índice +1 bloco do arquivo de dados): " << quantidade_blocos_lidos << endl;    
         cout << "Quantidade de blocos totais no arquivo: " << contaBlocos(arquivo_indice) << endl;
         cout << "----------------------------------------" << endl;
+
         return;
+
     } else {
+
         cout << "Registro não encontrado :(" << endl;
+
         return;
     }
 
@@ -72,7 +84,7 @@ void buscaArquivoDados(int ID, int endereco, int quantidade_blocos_lidos, ifstre
 
 // Função que busca pela chave no arquivo de índice
 void buscaChaveIndice(ifstream &arquivo, int ID, ifstream &arquivo_dados) {  
-    arquivo.seekg(0); 
+    arquivo.seekg(0);   // vai para o início do arquivo
     
     int tipo_bloco;             // 0 = bloco interno, 1 = bloco folha
     int quant_chaves_no_bloco;  // quantidade de chaves no bloco
@@ -90,9 +102,9 @@ void buscaChaveIndice(ifstream &arquivo, int ID, ifstream &arquivo_dados) {
 
         int quant_campos = (quant_chaves_no_bloco * 2) + 1;   // quantidade de campos no bloco (chaves + endereços de índice)
 
-        int chave;  
-        int endereco_atual;
-        int endereco_anterior;
+        int chave;              // chave atual
+        int endereco_atual;     // endereço atual
+        int endereco_anterior;  // endereço anterior
 
         // Percorre todos os campos do bloco até achar o endereço do próximo bloco onde devemos procurar o ID
         for(int i = 0; i < quant_campos; i++) {
@@ -107,7 +119,7 @@ void buscaChaveIndice(ifstream &arquivo, int ID, ifstream &arquivo_dados) {
 
                 // Se o ID for maior ou igual a chave
                 if(ID >= chave && i > 0) {
-                    int chave_aux;
+                    int chave_aux;  // chave auxiliar
 
                     arquivo.read((char*)&chave_aux, sizeof(int));   // lê a próxima chave
                     arquivo.clear();
@@ -151,13 +163,13 @@ void buscaChaveIndice(ifstream &arquivo, int ID, ifstream &arquivo_dados) {
         quant_blocos_lidos++;   // incrementa a quantidade de blocos lidos
     }
 
-    // A partir daqui, já chegamos em um bloco folha (tipo_bloco == 1)
+    // --------------- A partir daqui, já chegamos em um bloco folha (tipo_bloco == 1) ---------------
 
     arquivo.read((char*)&quant_chaves_no_bloco, sizeof(int));   // lê a quantidade de chaves no bloco folha
     arquivo.clear();
 
-    int chave;
-    int endereco_dados;
+    int chave;          // chave atual
+    int endereco_dados; // endereço do registro no arquivo de dados
 
     // Percorre todas as chaves do bloco folha
     for(int i = 0; i < quant_chaves_no_bloco; i++) {
@@ -187,9 +199,9 @@ int main(int argc, char *argv[]) {
 
     cout << ">>> Programa que busca por um registro pesquisando através do arquivo de índice primário <<<\n" << endl;
 
-    int ID = atoi(argv[1]);                                                     // ID do registro a ser buscado
-    ifstream arquivoDados("arquivo_dados5000.bin", ios::in | ios::binary);     // arquivo de dados
-    ifstream arquivoIndice("arquivo_indice_primario.bin", ios::in | ios::binary);     // arquivo de índice
+    int ID = atoi(argv[1]);                                                             // ID do registro a ser buscado
+    ifstream arquivoDados("arquivo_dados5000.bin", ios::in | ios::binary);              // arquivo de dados
+    ifstream arquivoIndice("arquivo_indice_primario.bin", ios::in | ios::binary);       // arquivo de índice
 
     cout << "Buscando pelo registro de ID " << ID << " ..." << endl;
 
