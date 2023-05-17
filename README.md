@@ -1,80 +1,106 @@
-# tp2_BD
+# ufam-db-tp2
 
-- Link do enunciado do trabalho no drive >> 
+Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciencia da Computação na UFAM
 
-https://docs.google.com/document/d/1ZmqKR5zsPUptUT7f20VU5HQB1Wvbm0VI/edit
+## Arquivos
 
-- Link de como configurar o VScode para trabalho por pares >> 
+- ```TP2_documentação.pdf``` -> Documentação do trabalho
+- ```Dockerfile``` -> Dockerfile para criação do ambiente
 
-https://ibrahimbutt.medium.com/how-to-set-up-vscode-for-remote-pair-programming-e5f5c30a48e2
+------------------------ Hashing ------------------------
 
-- Link para a nossa Documentação no drive >> 
+- ```upload_dados.cpp``` -> Script que mapeia e faz a carga dos dados de entrada, gerando o arquivo de dados.
+- ```structs_dados.h``` -> Script contendo structs e constantes mais importantes.
+- ```findrec.cpp``` -> Script que faz a busca diretamente no arquivo de dados por um registro com o ID informado.
 
-https://docs.google.com/document/d/1r-rjzApdRHsjGB1FscKPY337EZh750_bJQAWtc2yvwk/edit
+------------------------ Primário ------------------------
 
-## Apresentação 
+- ```upload_pri.cpp``` -> Script que faz a leitura do arquivo de dados e realiza a inserção dos ID's na árvore B+ por meio de funções declaradas no ```bplustree_pri.h```.
+- ```bplustree_pri.h``` -> Script que possui todas as funções relacionadas à árvore B+ e à construção do arquivo de índice primário.
+- ```structs_pri.h``` -> Script contendo structs e constantes mais importantes.
+- ```seek1.cpp``` -> Script que faz a busca diretamente no arquivo de índice primário por um registro com o ID informado.
 
-Este trabalho consiste na implementação de programas para armazenamento e consulta em  dados armazenados em memória secundária utilizando as estruturas de arquivo de dados e índice estudadas nas aulas. Os programas devem fornecer suporte para a inserção, assim como diferentes formas de busca, seguindo as técnicas apresentadas nas aulas de organização e indexação de arquivos.
+------------------------ Secundário ------------------------
 
-O trabalho deve ser implementado na linguagem C++ utilizando as bibliotecas padrão de chamadas de sistema disponíveis no Linux.
+- ```upload_sec.cpp``` -> Script que faz a leitura do arquivo de dados e realiza a inserção dos Títulos na árvore B+ por meio de funções declaradas no ```bplustree_pri.h```.
+- ```bplustree_sec.h``` -> Script que possui todas as funções relacionadas à árvore B+ e à construção do arquivo de índice secundário.
+- ```structs_se.h``` -> Script contendo structs e constantes mais importantes.
+- ```seek2.cpp``` -> Script que faz a busca diretamente no arquivo de índice secundário por um registro com o Título informado.
 
-Os dados para testes e avaliação dos programas implementados estão disponíveis neste arquivo: https://drive.google.com/file/d/1EVoP0d9Wwzj1O6eoFIkel9I3cpe43Gbv/view em formato CSV que servirá apenas como entrada de dados.
+## Como executar os scripts
 
-## Descrição do trabalho
+### Script tp1_3.2.py
 
-O arquivo de dados deverá armazenar registros de dados sobre artigos científicos publicados em conferências.  A estrutura deste arquivo será a seguinte:
+Primeiro, crie um BD utilizando o pgAdmin ou o psql pelo terminal ```CREATE DATABASE nome_database;```
 
-| Campo  | Tipo | Descrição |
-| ------------- | ------------- | ------------- |
-| ID | inteiro | Código identificador do artigo |
-| Título | alfa 300 | Título de artigo |
-| Ano | inteiro | Ano de publicação do artigo |
-| Autores | alfa 150 | Lista dos autores do artigo |
-| Citações | inteiro | Número de vezes que o artigo foi citado |
-| Atualização | data e hora | Data e hora da última atualização dos dados |
-| Snippet | alfa entre 100 e 1024 | Resumo textual do artigo |
+Em seguida, instale as bibliotecas presentes no arquivo ```requirements.txt```, necessárias para a execução dos códigos 
 
-Os seguintes programas devem ser implementados:
+Após isso, no script ```tp1_3.2.py```, troque as variáveis do seguinte trecho de código, presente logo no início do código, de acordo com os seus dados:
 
-**1. upload \<file>:** Programa que fará a carga inicial dos dados de entrada que irá criar um banco de dados composto pelos seguintes arquivos:
- - **Arquivo de dados** organizado por hashing 
- - **Arquivo de índice primário** usando uma B+Tree armazenada em memória secundária
- - **Arquivo de índice secundário** usando uma outra B+Tree em memória secundária
+```python
+# Altere de acordo com seus dados
+host="localhost"
+nome_database="myowndatabase"
+user="postgres"
+password="2703"
+```
 
-**2. findrec \<ID>:** Programa que busca diretamente no arquivo de dados por um registro com o ID informado e, se existir, retorna os campos do registro, a quantidade de blocos lidos para encontrá-lo e a quantidade total de blocos do arquivo de dados;
+- ```nome_database``` deve ser o nome do BD que você acabou de criar pelo pgAdmin ou pelo próprio terminal
+- ```user``` deve ser o seu nome de usuário
+- ```password``` deve ser a sua senha
 
-**3. seek1 \<ID>:** Programa que devolve o registro com ID igual ao informado, se existir, pesquisando através do arquivo de índice primário, mostrando todos os campos, a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice primário;
+Após ter feito isso, basta trocar a variável ```path_dir```, ainda no script ```tp1_3.2.py```, para conter o caminho do diretório para o arquivo de entrada ```amazon-meta.txt``` no seu computador:
 
-**4. seek2 \<Titulo>:** Programa que mostra os dados do registro que possua o Título igual ao informado, se existir, pesquisando através do arquivo de índice secundário, informando a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice secundário
+```python3
+path_dir = "C:\\Users\\naths\\Downloads\\Trabalho-1-BD\\amazon-meta.txt"
 
-## O que entregar 
+# Coloque aqui o diretório para o arquivo de entrada
+with open(path_dir, 'r', encoding='utf-8') as arquivo:
+    linhas = arquivo.readlines()
+```
 
-Os arquivos-fonte dos programas, com comentários adequados para permitir a correção 
+Em seguida, já pode executar o código e a criação do esquema do BD, a extração de dados do arquivo de entrada e a população das relações já devem ocorrer corretamente.
 
-Os programas prontos para serem testados. Os nomes dos programas devem seguir as instruções indicadas no item 2 deste trabalho.
+Caso seja testado com o arquivo ```amazon-meta.txt``` completo, é normal que demore, dada a quantidade exorbitante de dados a serem extraídos.
 
- A documentação do projeto dos programas deve ser disponibilizada em um único arquivo PDF nomeado **TP2_documentação.pdf**, registrando as todas as decisões de projeto tomadas, incluindo:
+### Script tp1_3.3.py
 
- - A estrutura de cada arquivo de dados e índices;
- - Quais fontes formam cada programa;
- - As funções que cada fonte contém;
- - Quem desenvolveu cada fonte/função;
- - Qual o papel de cada função;
-            
-## Como entregar (provavelmente vai mudar)
+-----------------------------------------------------
 
-A entrega será feita em um container do Docker que deverá incluir, além da documentação e dos programas fonte, todo o ambiente operacional necessário para o desenvolvimento e execução do trabalho, e toda e qualquer biblioteca necessária para execução do trabalho sem erros.
+**OBSERVAÇÃO IMPORTANTE!!!**
 
-O container deverá ser nomeado "tp2_<nome1_nome2_nome3>" onde <nome1_nome2_nome3> deve ser substituido pelos nomes dos integrantes do trio que desenvolveu o trabalho. O container deverá ser copiado para este endereço no Google Drive até às 23:59 do dia 15/05/2023. No dia seguinte, passarei a lista dos containers que recebi para controle.
+Temos uma relação chamada "Similar", que é uma palavra reservada do SQL. 
 
-## Avaliação
+As consultas do dashboard já estão prontas para que o nome Similar não dê erro ao serem executadas:
 
-Execução: Execução correta: 30%; Saída legível: 15%; Estilo de programação: Código bem estruturado: 15%; Documentação: Código legível: 15%, Descrição das estruturas de dados e principais decisões: 25%
+```python
+\"Similar\"
+```
 
-## Comentários Gerais
+Entretando, **se as consultas forem testadas no pyAdmin**, por exemplo, devem apenas ser retirados as contra-barras presentes no nome Similar. Logo, ficaria da seguinte forma:
 
-Comece a fazer este trabalho logo, enquanto o problema está fresco na memória e o prazo para terminá-lo está tão longe quanto jamais poderá estar. Seja ético, desenvolva seu trabalho, não copie de outras equipes e nem da Internet. 
+```SQL
+"Similar"
+```
+-----------------------------------------------------
 
-O monitor e o professor poderão pedir defesa do trabalho apresentado, sendo que somente um dos alunos será chamado para defender o trabalho pela equipe. Assim, é importante que todos os alunos participem do desenvolvimento. 
+Para testar o script ```tp1_3.3.py``` que executará o Dashboard das consultas, deve-se também alterar os dados de ```host```, ```nome_database```, ```user``` e ```password``` conforme foi feito para a execução do ```tp1_3.2.py```.  
 
-Pode ser uma boa oportunidade para que os alunos exercitem o desenvolvimento usando programação por pares, que além de ajudar na qualidade do código desenvolvido, contribui para o aprendizado de todos os membros da equipe. Alguns ambientes de desenvolvimento integrado tem bom suporte para programação por pares remota.
+Em seguida, recomenda-se testar uma consulta por vez, comentando todas as outras que não estiverem sendo utilizadas no momento e deixando descomentada somente a que está sendo testada.
+
+Após isso, basta ficar atento às questões ```A``` ```B``` e ```C```, que precisam ter o valor do ASIN alterado para o ASIN do produto que se deseja buscar.
+
+Para facilitar esse processo, identificamos nessas 3 questões onde deve ser alterado para colocar o valor do ASIN desejado. Por exemplo:
+
+```python3
+# QUESTAO B - Dado um produto, listar os produtos similares com maiores vendas do que ele
+
+# !!!! ---> MODIFIQUE AS LINHAS 59 E 60 NOS CAMPOS 'COLOQUE_ASIN_AQUI' DE ACORDO COM O PRODUTO QUE DESEJA BUSCAR
+cur.execute('''SELECT MainTable.ASIN, MainTable.title, MainTable.salesrank 
+                FROM MainTable 
+                JOIN \"Similar\" s ON MainTable.ASIN = s.ASIN_similar 
+                WHERE s.ASIN_original = 'COLOQUE_ASIN_AQUI' AND 
+                MainTable.salesrank > (SELECT salesrank FROM MainTable WHERE ASIN = 'COLOQUE_ASIN_AQUI')
+                ORDER BY MainTable.salesrank ASC;'''
+)
+```
