@@ -22,7 +22,7 @@ Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciencia
 
 ------------------------ Secundário ------------------------
 
-- ```upload_sec.cpp``` -> Script que faz a leitura do arquivo de dados e realiza a inserção dos Títulos na árvore B+ por meio de funções declaradas no ```bplustree_pri.h```.
+- ```upload_sec.cpp``` -> Script que faz a leitura do arquivo de dados e realiza a inserção dos Títulos na árvore B+ por meio de funções declaradas no ```bplustree_sec.h```.
 - ```bplustree_sec.h``` -> Script que possui todas as funções relacionadas à árvore B+ e à construção do arquivo de índice secundário.
 - ```structs_se.h``` -> Script contendo structs e constantes mais importantes.
 - ```seek2.cpp``` -> Script que faz a busca diretamente no arquivo de índice secundário por um registro com o Título informado.
