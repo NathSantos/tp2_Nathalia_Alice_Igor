@@ -6,6 +6,7 @@ Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciênci
 
 - ```TP2_documentação.pdf``` -> Documentação do trabalho
 - ```Dockerfile``` -> Dockerfile para criação do ambiente
+- **```artigo.csv```** -> Arquivo de entrada que pode ser baixado pelo link (descompacte o ``artigo.csv.gz`` que será baixado): https://drive.google.com/file/d/1EVoP0d9Wwzj1O6eoFIkel9I3cpe43Gbv/view?usp=sharing
 
 ------------------------ Hashing ------------------------
 
