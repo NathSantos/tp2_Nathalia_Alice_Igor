@@ -28,80 +28,69 @@ Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciênci
 - ```structs_se.h``` -> Programa contendo structs e constantes mais importantes.
 - ```seek2.cpp``` -> Programa que faz a busca diretamente no arquivo de índice secundário por um registro com o Título informado.
 
+**OBS:** Na documentação ```TP2_documentação.pdf``` explicamos melhor sobre cada programa e arquivo citado acima, assim como outras observações importantes sobre o trabalho.
+
 ## Ordem e Forma de Compilação e Execução
 
-### Script tp1_3.2.py
+### Preparação do Ambiente
 
-Primeiro, crie um BD utilizando o pgAdmin ou o psql pelo terminal ```CREATE DATABASE nome_database;```
+1. Baixe o repositório e , após ter baixado o arquivo de entrada ```artigo.csv```, coloque-o na pasta junto com os outros programas.
 
-Em seguida, instale as bibliotecas presentes no arquivo ```requirements.txt```, necessárias para a execução dos códigos 
+2. Em seguida, já podemos criar nosso ambiente com o Dockerfile.
 
-Após isso, no script ```tp1_3.2.py```, troque as variáveis do seguinte trecho de código, presente logo no início do código, de acordo com os seus dados:
+3. Abra o terminal e navegue até a pasta onde está os programas. Em seguida, vamos construir a imagem Docker com base no Dockerfile:
 
-```python
-# Altere de acordo com seus dados
-host="localhost"
-nome_database="myowndatabase"
-user="postgres"
-password="2703"
+```Bash
+sudo docker build -t nome_da_imagem .
 ```
 
-- ```nome_database``` deve ser o nome do BD que você acabou de criar pelo pgAdmin ou pelo próprio terminal
-- ```user``` deve ser o seu nome de usuário
-- ```password``` deve ser a sua senha
+4. Após a conclusão da construção, você pode executar um contêiner com base nessa imagem:
 
-Após ter feito isso, basta trocar a variável ```path_dir```, ainda no script ```tp1_3.2.py```, para conter o caminho do diretório para o arquivo de entrada ```amazon-meta.txt``` no seu computador:
-
-```python3
-path_dir = "C:\\Users\\naths\\Downloads\\Trabalho-1-BD\\amazon-meta.txt"
-
-# Coloque aqui o diretório para o arquivo de entrada
-with open(path_dir, 'r', encoding='utf-8') as arquivo:
-    linhas = arquivo.readlines()
+```Bash
+sudo docker run -it nome_da_imagem
 ```
 
-Em seguida, já pode executar o código e a criação do esquema do BD, a extração de dados do arquivo de entrada e a população das relações já devem ocorrer corretamente.
+5. Isso iniciará o contêiner com a imagem que você construiu e você já estará dentro do contêiner. Agora, como em nosso Dockerfile copiamos os programas para a pasta ```src```, temos que navegar até essa pasta:
 
-Caso seja testado com o arquivo ```amazon-meta.txt``` completo, é normal que demore, dada a quantidade exorbitante de dados a serem extraídos.
-
-### Script tp1_3.3.py
-
------------------------------------------------------
-
-**OBSERVAÇÃO IMPORTANTE!!!**
-
-Temos uma relação chamada "Similar", que é uma palavra reservada do SQL. 
-
-As consultas do dashboard já estão prontas para que o nome Similar não dê erro ao serem executadas:
-
-```python
-\"Similar\"
+```Bash
+cd src
 ```
 
-Entretando, **se as consultas forem testadas no pyAdmin**, por exemplo, devem apenas ser retirados as contra-barras presentes no nome Similar. Logo, ficaria da seguinte forma:
+6. Por fim, liste o conteúdo do diretório com o comando ```ls``` para se certificar de que está na pasta certa. Todos os programas, assim como o arquivo de entrada, devem aparecer. O resultado será algo parecido com:
 
-```SQL
-"Similar"
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/a0970150-b3d0-402c-bc35-8c2445382e2a)
+
+### Geração do Arquivo de Dados
+
+7. Agora, já estamos prontos para compilar e executar os programas do trabalho. Devemos começar gerando o arquivo de dados, a partir do arquivo de entrada. Para isso, primeiro vamos compilar o ```upload_dados.cpp```
+
+```Bash
+g++ upload_dados.cpp -o up_dados
 ```
------------------------------------------------------
 
-Para testar o script ```tp1_3.3.py``` que executará o Dashboard das consultas, deve-se também alterar os dados de ```host```, ```nome_database```, ```user``` e ```password``` conforme foi feito para a execução do ```tp1_3.2.py```.  
+8. Em seguida, vamos executá-lo passando o arquivo de entrada ```artigo.csv``` como argumento:
 
-Em seguida, recomenda-se testar uma consulta por vez, comentando todas as outras que não estiverem sendo utilizadas no momento e deixando descomentada somente a que está sendo testada.
-
-Após isso, basta ficar atento às questões ```A``` ```B``` e ```C```, que precisam ter o valor do ASIN alterado para o ASIN do produto que se deseja buscar.
-
-Para facilitar esse processo, identificamos nessas 3 questões onde deve ser alterado para colocar o valor do ASIN desejado. Por exemplo:
-
-```python3
-# QUESTAO B - Dado um produto, listar os produtos similares com maiores vendas do que ele
-
-# !!!! ---> MODIFIQUE AS LINHAS 59 E 60 NOS CAMPOS 'COLOQUE_ASIN_AQUI' DE ACORDO COM O PRODUTO QUE DESEJA BUSCAR
-cur.execute('''SELECT MainTable.ASIN, MainTable.title, MainTable.salesrank 
-                FROM MainTable 
-                JOIN \"Similar\" s ON MainTable.ASIN = s.ASIN_similar 
-                WHERE s.ASIN_original = 'COLOQUE_ASIN_AQUI' AND 
-                MainTable.salesrank > (SELECT salesrank FROM MainTable WHERE ASIN = 'COLOQUE_ASIN_AQUI')
-                ORDER BY MainTable.salesrank ASC;'''
-)
+```Bash
+./up_dados artigo.csv
 ```
+
+9. Durante a execução, serão exibidos logs no terminal que indicarão quando o código terminar de ser executado, como mostra a imagem a seguir. Após a execução, teremos nosso arquivo de dados pronto no arquivo binário ```arquivo_dados.bin``` e um arquivo de texto ```output_hash.txt``` que lê o arquivo binário e passa para .txt apenas para se ter uma visualização de como ficou estruturado o arquivo de dados.
+
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/e491b4d8-27e6-477b-9a37-7546c9942070)
+
+### Geração do Arquivo de Índice Primário
+
+10. Agora que já temos o arquivo de dados, podemos gerar os arquivos de índice. Vamos começar gerando com o arquivo de índice primário.
+
+11. Para isso, basta compilar o ```upload_pri.cpp```:
+
+```Bash
+g++ upload_pri.cpp -o up_pri
+```
+
+12. E executá-lo logo em seguida. Dessa vez não vamos passar nada como argumento pois o arquivo de dados ```arquivo_dados.bin``` já está sendo chamado dentro do programa.
+
+```Bash
+./up_pri
+```
+
