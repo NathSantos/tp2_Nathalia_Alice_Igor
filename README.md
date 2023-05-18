@@ -94,3 +94,6 @@ g++ upload_pri.cpp -o up_pri
 ./up_pri
 ```
 
+
+
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/23bbce85-2b00-427d-84ff-6045fd511446)
