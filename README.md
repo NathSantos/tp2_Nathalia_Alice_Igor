@@ -1,6 +1,6 @@
 # ufam-db-tp2
 
-Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciencia da Computação na UFAM
+Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciência da Computação na UFAM
 
 ## Arquivos
 
