@@ -32,6 +32,8 @@ Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciênci
 
 ## Compilação e Execução
 
+----------------------------------------------------------------------------------------
+
 ### Preparação do Ambiente
 
 Baixe o repositório e , após ter baixado o arquivo de entrada ```artigo.csv```, coloque-o na pasta junto com os outros programas.
@@ -60,6 +62,8 @@ Por fim, liste o conteúdo do diretório com o comando ```ls``` para se certific
 
 ![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/a0970150-b3d0-402c-bc35-8c2445382e2a)
 
+----------------------------------------------------------------------------------------
+
 ### Geração do Arquivo de Dados
 
 Agora, já estamos prontos para compilar e executar os programas do trabalho. Devemos começar gerando o arquivo de dados, a partir do arquivo de entrada. Para isso, primeiro vamos compilar o ```upload_dados.cpp```
@@ -77,6 +81,8 @@ Em seguida, vamos executá-lo passando o arquivo de entrada ```artigo.csv``` com
 Durante a execução, serão exibidos logs no terminal que indicarão quando o código terminar de ser executado, como mostra a imagem a seguir. Após a execução, teremos nosso arquivo de dados pronto no arquivo binário ```arquivo_dados.bin``` e um arquivo de texto ```output_hash.txt``` que lê o arquivo binário e passa para .txt apenas para se ter uma visualização de como ficou estruturado o arquivo de dados.
 
 ![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/e491b4d8-27e6-477b-9a37-7546c9942070)
+
+----------------------------------------------------------------------------------------
 
 ### Geração do Arquivo de Índice Primário
 
@@ -98,6 +104,8 @@ Assim como na geração do arquivo de dados, serão exibidos logs no terminal pa
 
 ![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/0187d286-5ccd-48c5-98c4-e2545b33b81d)
 
+----------------------------------------------------------------------------------------
+
 ### Geração do Arquivo de Índice Secundário
 
 Agora, para gerar o arquivo de índice secunário, vamos compilar o ```upload_sec.cpp```:
@@ -116,4 +124,14 @@ Da mesma forma, haverá logs no terminal indicando a situação do programa. Ap�
 
 ![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/2fd57bbf-9587-4bfa-9a34-676865323a24)
 
+----------------------------------------------------------------------------------------
+
 ### Busca no Arquivo de Dados
+
+Agora que temos todos os arquivos gerados, podemos fazer as buscas.
+
+Começando pela busca no arquivo de dados, vamos compilar o ```findrec.cpp```, que realiza essa função de busca.
+
+```Bash
+g++ findrec.cpp -o findrec
+```
