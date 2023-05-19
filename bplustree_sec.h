@@ -52,7 +52,6 @@ class BPTree{
 	public:
 		BPTree();
 		void insert(string, int);	
-		void displayBFS(Node*, ofstream&);
 		int contaBlocosInternos(Node*);
 		Node* getRoot();
 		int buscaBlocoBinario(Node*);
@@ -153,8 +152,8 @@ void BPTree::insert(string x, int block_address){
 			virtualNode[i].assign(x); // Insere chave no vetor virtual
 			virtualAddress[i] = block_address; // Define endereço do bloco de dados
 			newLeaf->is_leaf = true; // Define novo nó folha
-			cursor->size = ((MAX/2)); // Atualiza contador de chaves no cursor
-			newLeaf->size = ((MAX/2)) + 1; // Atualiza contador de chaves no cursor
+			cursor->size = (MAX/2); // Atualiza contador de chaves no cursor
+			newLeaf->size = (MAX/2) + 1; // Atualiza contador de chaves no cursor
 			cursor->ptr[cursor->size] = newLeaf; // Atualiza ponteiro do cursor
 			newLeaf->ptr[newLeaf->size] = cursor->ptr[MAX]; // Atualiza ponteiro do cursor
 			cursor->ptr[MAX] = NULL; // Atualiza ponteiro do cursor
@@ -313,79 +312,6 @@ Node* BPTree::findParent(Node* cursor, Node* child){
 	return parent;
 
 } // end
-
-// BPTREE: DISPLAY BSF - mostra como ficou a árvore em um arquivo texto (Técnica BFS - busca por largura)
-void BPTree::displayBFS(Node* root, ofstream& output) {
-    queue<Node*> nodeQueue;	// Cria fila de nós
-    nodeQueue.push(root);	// Adiciona raiz na fila
-	
-	int posicao = 0;	// Posição do bloco (nó) no arquivo de índice
-	int contador = 1;	// Contador de nós
-
-	output << "================================= ÁRVORE B+ ===================================" << endl;
-	output << "\n!!! OS NÚMEROS DENTRO DOS PARÊNTESES SÃO ENDEREÇOS, AS CHAVES ESTÃO FORA !!! \n" << endl;
-	output << "===============================================================================\n\n" << endl;
-
-	// Enquanto a fila não estiver vazia
-    while (!nodeQueue.empty()) {
-        Node* cursor = nodeQueue.front();	// Pega primeiro nó da fila
-        nodeQueue.pop();					// Remove primeiro nó da fila
-
-		output << "\n#### Este nó corresponde ao seguinte endereço no arquivo de índice: " << posicao << " ####" << endl;
-
-		// Se cursor for folha
-        if (cursor->is_leaf) {
-
-            output << "\n-> NÓ FOLHA!" << endl;
-			output << "Quantidade de chaves no nó: " << cursor->size << endl;
-			output << "Endereço do nó: " << cursor << endl;
-
-			for (int i = 0; i < cursor->size; i++) {					// Percorre chaves do nó e printa elas
-					output << cursor->key[i];
-					output << " (" << cursor->address[i] << ") | ";
-			}
-
-        } 
-		// Se cursor não for folha
-		else {
-
-            output << "\n-> NÓ INTERNO!" << endl;
-			output << "Quantidade de chaves no nó: " << cursor->size << endl;
-			output << "Endereço do nó: " << cursor << endl;
-
-			for (int i = 0; i < cursor->size+1; i++) {					// Percorre chaves do nó e printa elas
-					if(i == 0) {
-						output << "(" << BLOCO_SIZE*contador << ") ";
-						contador++;
-
-						output << cursor->key[i] << " ";
-
-						output << "(" << BLOCO_SIZE*contador << ") ";
-						contador++;
-
-					}
-
-					else {
-						output << cursor->key[i] << " ";
-
-						output << "(" << BLOCO_SIZE*contador << ") ";
-						contador++;
-					}
-			}
-
-        }
-		
-        output << "\n\n";
-
-		posicao += BLOCO_SIZE;	// Incrementa posição do bloco (nó) no arquivo de índice
-
-        if (!cursor->is_leaf) {
-            for (int i = 0; i < cursor->size + 1; i++) {	// Percorre ponteiros do nó e adiciona eles na fila
-                nodeQueue.push(cursor->ptr[i]);
-            }
-        }
-    }
-}
 
 // BPTREE: Função que retorna a quantidade de blocos internos na árvore
 int BPTree::contaBlocosInternos(Node* root) {

@@ -150,7 +150,7 @@ void ler_arquivo_secundario() {
 
                         }
                 }
-
+                
                 cont_verificador_chaves++;  // incrementa o contador de chaves
             }
         } 
@@ -203,7 +203,7 @@ void ler_arquivo_secundario() {
             }
         }
     }
-    
+
     output2.close();    // fecha o arquivo de saída
     arquivo.close();    // fecha o arquivo de índice
 }
@@ -234,7 +234,7 @@ int main(int argc, char* argv[]){
 
     }
 
-    cout << "Inserção Concluída!\n" << endl;
+    cout << "\nInserção Concluída!\n" << endl;
 
     cout << "============================================" << endl;
 
@@ -252,31 +252,12 @@ int main(int argc, char* argv[]){
 
     file.close();   // fecha o arquivo de índice secundário
 
-    cout << "============================================" << endl;
+    cout << "Arquivo de índice pronto!\n" << endl;
 
-
-
-    // ================== FAZ A LEITURA DA ÁRVORE E MOSTRA EM UM ARQUIVO TEXTO ==================
-
-
-
-    ofstream arqMostra("arvore_sec.txt");
-
-    cout << "\nLendo árvore em um arquivo texto ..." << endl;
-
-    bpt.displayBFS(bpt.getRoot(), arqMostra);   // mostra a árvore em um arquivo texto
-
-    cout << "Árvore lida!" << endl;
-    cout << "Abra o arquivo arvore_sec.txt para verificar a leitura! :D\n" << endl;
-
-    arqMostra.close();  // fecha o arquivo texto
-
-    cout << "============================================" << endl;
-    
+    cout << "============================================" << endl;    
 
 
     // =============== LENDO ARQUIVO DE INDICE SECUNDARIO =================
-
 
 
     cout << "\nLendo arquivo de índice secundário ..." << endl;
@@ -288,7 +269,7 @@ int main(int argc, char* argv[]){
     
     cout << "============================================\n" << endl;
 
-    cout << "Número máximo de chaves por bloco: " << MAX << endl;
+    cout << "Número máximo de chaves por bloco: " << MAX << "\n" << endl;
 
 
 	return 0;

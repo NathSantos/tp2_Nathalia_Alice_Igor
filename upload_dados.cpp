@@ -469,5 +469,5 @@ int main(int argc, char *argv[]) {
     cout << "Lendo o arquivo de dados ..." << endl;
     ler_arquivo_binario();  // lê o arquivo binário gerado
     cout << "Arquivo binário lido!" << endl;
-    cout << "Abra o arquivo output_hash.txt para verificar a leitura! :D" << endl;
+    cout << "Abra o arquivo output_hash.txt para verificar a leitura! :D\n" << endl;
 }

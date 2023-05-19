@@ -62,7 +62,7 @@ void buscaArquivoDados(string titulo, int endereco, int quantidade_blocos_lidos,
         cout << "----------------------------------------" << endl;
         return;
     } else {
-        cout << "Registro não encontrado :(" << endl;
+        cout << "Registro não encontrado no endereço :(" << endl;
         return;
     }
 

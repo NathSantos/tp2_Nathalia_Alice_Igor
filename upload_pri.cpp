@@ -207,6 +207,8 @@ int main(int argc, char* argv[]){
     cout << "Arquivo de dados lido!" << endl;
     cout << "============================================" << endl;
 
+
+
     // ================== INSERINDO REGISTROS NA ÁRVORE E NO ARQUIVO DE ÍNDICE ==================
 
     fstream file("arquivo_indice_primario.bin", ios::out | ios::binary);    // abre o arquivo de índice primário para escrita
@@ -220,26 +222,13 @@ int main(int argc, char* argv[]){
 
     }
 
-    cout << "Inserção Concluída!\n" << endl;
+    cout << "\nInserção Concluída!\n" << endl;
 
     file.close();   // fecha o arquivo de índice primário
 
     cout << "============================================" << endl;
 
-    // ================== FAZ A LEITURA DA ÁRVORE E MOSTRA EM UM ARQUIVO TEXTO ==================
 
-    ofstream arqMostra("arvore_pri.txt");
-
-    cout << "\nLendo árvore em um arquivo texto ..." << endl;
-
-    bpt.displayBFS(bpt.getRoot(), arqMostra);   // mostra a árvore em um arquivo texto
-
-    cout << "Árvore lida!" << endl;
-    cout << "Abra o arquivo arvore_pri.txt para verificar a leitura! :D\n" << endl;
-
-    arqMostra.close();  // fecha o arquivo texto
-
-    cout << "============================================" << endl;
 
     // =============== LENDO ARQUIVO DE INDICE PRIMARIO =================
 
@@ -252,6 +241,6 @@ int main(int argc, char* argv[]){
     
     cout << "============================================\n" << endl;
 
-    cout << "Número máximo de chaves por bloco: " << MAX << endl;      
+    cout << "Número máximo de chaves por bloco: " << MAX << "\n" << endl;      
 	return 0;
 }
