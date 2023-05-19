@@ -94,6 +94,24 @@ g++ upload_pri.cpp -o up_pri
 ./up_pri
 ```
 
-
+13. Assim como na geração do arquivo de dados, serão exibidos logs no terminal para indicar quando ainda está sendo feita a inserção dos ID's na árvore B+ e, consequentemente, a geração do arquivo de índice e quando o código terminar sua execução. Após a execução, teremos nosso arquivo de índice primário pronto no arquivo binário ```arquivo_indice_primario.bin``` e dois arquivos de texto: ```output_pri.txt``` e ```arvore_pri.txt```, que mostram, respectivamente, o arquivo de índice e a árvore B+.
 
 ![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/23bbce85-2b00-427d-84ff-6045fd511446)
+
+### Geração do Arquivo de Índice Secundário
+
+14. Agpra, para gerar o arquivo de índice secunário, vamos compilar o ```upload_sec.cpp```:
+
+```Bash
+g++ upload_sec.cpp -o up_sec
+```
+
+15. E executá-lo logo em seguida. Não vamos passar nada como argumento pois o arquivo de dados ```arquivo_dados.bin``` também já está sendo chamado dentro do programa.
+
+```Bash
+./up_sec
+```
+
+16. Da mesma forma, haverá logs no terminal indicando a situação do programa. Após a execução, teremos nosso arquivo de índice secundário pronto no arquivo binário ```arquivo_indice_secundario.bin``` e dois arquivos de texto: ```output_sec.txt``` e ```arvore_sec.txt```, que mostram, respectivamente, o arquivo de índice e a árvore B+.
+
+### Busca no Arquivo de Dados
