@@ -135,3 +135,56 @@ Começando pela busca no arquivo de dados, vamos compilar o ```findrec.cpp```, q
 ```Bash
 g++ findrec.cpp -o findrec
 ```
+
+E, em seguida, já podemos buscar diretamente no arquivo de dados por um registro com o ID informado como argumento:
+
+```Bash
+./findrec ID
+```
+
+Se existir, os campos do registro serão retornados, assim como a quantidade de blocos lidos para encontrá-lo e a quantidade total de blocos do arquivo de dados:
+
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/71c6fc91-4261-40df-aa1f-762afbf6ef36)
+
+----------------------------------------------------------------------------------------
+
+### Busca no Arquivo de Índice Primário
+
+Para fazer a busca no índice primário, é semelhante à busca no arquivo de dados, vamos compilar o ```seek1.cpp```:
+
+```Bash
+g++ seek1.cpp -o seek1
+```
+
+E, em seguida, já podemos buscar através do arquivo de índice primário por um registro com o ID informado como argumento:
+
+```Bash
+./seek1 ID
+```
+
+Se existir, os campos do registro serão retornados, assim como a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice primário:
+
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/3c72fd31-ed1e-45eb-8ec8-cc33a172316e)
+
+----------------------------------------------------------------------------------------
+
+### Busca no Arquivo de Índice Secundário
+
+Para fazer a busca no índice secundário, vamos compilar o ```seek2.cpp```:
+
+```Bash
+g++ seek2.cpp -o seek2
+```
+
+E vamos buscar através do arquivo de índice secundário por um registro com o Título informado como argumento. É importante colocar o Título entre aspas ao fazer a busca.
+
+```Bash
+./seek2 "Título"
+```
+
+Se existir, os campos do registro serão retornados, assim como a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice secundário:
+
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/8dfda94c-a37b-4857-b943-a917d71ba169)
+
+
+
