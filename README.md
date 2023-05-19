@@ -80,7 +80,7 @@ Em seguida, vamos executá-lo passando o arquivo de entrada ```artigo.csv``` com
 
 Durante a execução, serão exibidos logs no terminal que indicarão quando o código terminar de ser executado, como mostra a imagem a seguir. Após a execução, teremos nosso arquivo de dados pronto no arquivo binário ```arquivo_dados.bin``` e um arquivo de texto ```output_hash.txt``` que lê o arquivo binário e passa para .txt apenas para se ter uma visualização de como ficou estruturado o arquivo de dados.
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/e491b4d8-27e6-477b-9a37-7546c9942070)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/1e7d581a-f572-4815-a1ae-efa849fcddb9)
 
 ----------------------------------------------------------------------------------------
 
