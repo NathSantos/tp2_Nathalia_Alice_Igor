@@ -117,5 +117,3 @@ Da mesma forma, haverá logs no terminal indicando a situação do programa. Ap�
 [COLOCAR IMAGEM]
 
 ### Busca no Arquivo de Dados
-
-
