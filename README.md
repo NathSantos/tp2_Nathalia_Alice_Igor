@@ -28,7 +28,7 @@ Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciênci
 - ```structs_sec.h``` -> Programa contendo structs e constantes mais importantes.
 - ```seek2.cpp``` -> Programa que faz a busca diretamente no arquivo de índice secundário por um registro com o Título informado.
 
-**OBS:** Na documentação ```TP2_documentação.pdf``` explicamos melhor sobre cada programa e arquivo citado acima, assim como outras observações importantes sobre o trabalho.
+> **OBS:** Na documentação ```TP2_documentação.pdf``` explicamos melhor sobre cada programa e arquivo citado acima, assim como outras observações importantes sobre o trabalho.
 
 ## Compilação e Execução
 
