@@ -102,7 +102,7 @@ E executá-lo logo em seguida. Dessa vez não vamos passar nada como argumento p
 
 Assim como na geração do arquivo de dados, serão exibidos logs no terminal para indicar quando ainda está sendo feita a inserção dos ID's na árvore B+ e, consequentemente, a geração do arquivo de índice e quando o código terminar sua execução. Após a execução, teremos nosso arquivo de índice primário pronto no arquivo binário ```arquivo_indice_primario.bin``` e um arquivo de texto ```output_pri.txt``` que mostra o arquivo de índice primário.
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/0187d286-5ccd-48c5-98c4-e2545b33b81d)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/d669dd29-da30-4455-bd19-3705844e1ee6)
 
 ----------------------------------------------------------------------------------------
 
@@ -120,9 +120,9 @@ E executá-lo logo em seguida. Não vamos passar nada como argumento pois o arqu
 ./up_sec
 ```
 
-Da mesma forma, haverá logs no terminal indicando a situação do programa. Após a execução, teremos nosso arquivo de índice secundário pronto no arquivo binário ```arquivo_indice_secundario.bin``` e um arquivo de texto ```output_sec.txt``` que mostra o arquivo de índice primário.
+Da mesma forma, haverá logs no terminal indicando a situação do programa. Após a execução, teremos nosso arquivo de índice secundário pronto no arquivo binário ```arquivo_indice_secundario.bin``` e um arquivo de texto ```output_sec.txt``` que mostra o arquivo de índice secundário.
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/2fd57bbf-9587-4bfa-9a34-676865323a24)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/1a69a9e8-4579-4522-9554-dbacb7d144f3)
 
 ----------------------------------------------------------------------------------------
 
