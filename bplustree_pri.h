@@ -85,8 +85,8 @@ void BPTree::insert(int x, int block_address, fstream& file){
 		root->is_leaf = true; // Define nó raiz como folha
 		root->size = 1; // Contador de chaves no nó raiz
 
-		cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 1)\n"; 
-		alocaArvore_tipo1(root, file);	// Aloca nó no arquivo de índices
+		cout << "\nChave " << x << " inserida com sucesso.\n"; 
+		alocaArvore_tipo1(root, file);	// Aloca nó no arquivo de índices (tipo de inserção: 1)
 	} 
 	// Se árvore não estiver vazia, procuramos onde inserir chave
 	else {
@@ -129,8 +129,8 @@ void BPTree::insert(int x, int block_address, fstream& file){
 			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1]; // Atualiza ponteiro do cursor
 			cursor->ptr[cursor->size-1] = NULL; // Atualiza ponteiro do cursor
 
-			cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 2)\n"; 
-			alocaArvore_tipo2(cursor, x, file);	// Aloca nó no arquivo de índices
+			cout << "\nChave " << x << " inserida com sucesso.\n"; 
+			alocaArvore_tipo2(cursor, x, file);	// Aloca nó no arquivo de índices (tipo de inserção: 2)
 		} 
 		// Se o nó folha estiver cheio
 		else {
@@ -183,16 +183,16 @@ void BPTree::insert(int x, int block_address, fstream& file){
 				newRoot->size = 1;
 				root = newRoot;
 
-				cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 3)\n"; 
-				alocaArvore_tipo3(root, file);	// Aloca nó no arquivo de índices
+				cout << "\nChave " << x << " inserida com sucesso. \n"; 
+				alocaArvore_tipo3(root, file);	// Aloca nó no arquivo de índices (tipo de inserção: 3)
 
 			} 
 			// Se cursor não for raiz
 			else {
 
-				cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 3)\n";
+				cout << "\nChave " << x << " inserida com sucesso. \n";
 				insertInternal(newLeaf->key[0],parent,newLeaf,newLeaf->address[0]);	// Insere chave no nó interno
-				alocaArvore_tipo3(root, file);	// Aloca nó no arquivo de índices 
+				alocaArvore_tipo3(root, file);	// Aloca nó no arquivo de índices (tipo de inserção: 3)
 
 			}
 			

@@ -111,7 +111,7 @@ void buscaChaveIndice(ifstream &arquivo, string titulo, ifstream &arquivo_dados)
 
                     arquivo.read((char*)&tamanho_string_aux, sizeof(tamanho_string_aux));   // lê o tamanho da chave
 
-                    chave_aux.resize(tamanho_string_aux);
+                    chave_aux.resize(tamanho_string_aux);   // Faz o resize da chave para ter "tamanho_string" de tamanho
 
                     arquivo.read((char*)&chave_aux[0], tamanho_string_aux);   // lê a chave
                     arquivo.clear();
@@ -130,7 +130,7 @@ void buscaChaveIndice(ifstream &arquivo, string titulo, ifstream &arquivo_dados)
 
                 arquivo.read((char*)&tamanho_string, sizeof(tamanho_string));   // lê o tamanho da chave
 
-                chave.resize(tamanho_string);
+                chave.resize(tamanho_string);   // Faz o resize da chave para ter "tamanho_string" de tamanho
 
                 arquivo.read((char*)&chave[0], tamanho_string);   // lê a chave
                 arquivo.clear();
@@ -172,7 +172,7 @@ void buscaChaveIndice(ifstream &arquivo, string titulo, ifstream &arquivo_dados)
 
         arquivo.read((char*)&tamanho_string, sizeof(tamanho_string));   // lê o tamanho da chave
 
-        chave.resize(tamanho_string);
+        chave.resize(tamanho_string);   // Faz o resize da chave para ter "tamanho_string" de tamanho
 
         arquivo.read((char*)&chave[0], tamanho_string);   // lê a chave
         arquivo.clear();

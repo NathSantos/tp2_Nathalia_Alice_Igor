@@ -6,11 +6,11 @@ using namespace std;
 
 BPTree bpt; // B+ Tree
 
-string registros[MAX_ID];  // vetor de Títulos
-int enderecos[MAX_ID];  // vetor de endereços
-int cont = 0;           // contador dos vetores de registros e endereços
+string registros[MAX_ID];   // vetor de Títulos
+int enderecos[MAX_ID];      // vetor de endereços
+int cont = 0;               // contador dos vetores de registros e endereços
 
-// Função para ler o arquivo de dados e armazenar os IDs e endereços em vetores
+// Função para ler o arquivo de dados e armazenar os Títulos e endereços em vetores
 void ler_arquivo_dados() {
     ifstream arquivo("arquivo_dados.bin", ios::in | ios::binary);   // abre o arquivo de dados
 
@@ -40,8 +40,8 @@ void ler_arquivo_dados() {
 
             if (bloco_lido.registros[j].id > 0 && bloco_lido.registros[j].id <= MAX_ID){    // se o ID for válido
 
-                registros[cont] = bloco_lido.registros[j].titulo;   // armazena o ID no vetor de IDs
-                enderecos[cont] = endereco_atual;               // armazena o endereço no vetor de endereços
+                registros[cont] = bloco_lido.registros[j].titulo;   // armazena o Título no vetor de Títulos
+                enderecos[cont] = endereco_atual;                   // armazena o endereço no vetor de endereços
 
             }
 
@@ -52,7 +52,7 @@ void ler_arquivo_dados() {
     arquivo.close();    // fecha o arquivo de dados
 }
 
-// Função para ler o arquivo de índice secundário e imprimir os dados em um arquivo texto (output_pri.txt)
+// Função para ler o arquivo de índice secundário e imprimir os dados em um arquivo texto (output_sec.txt)
 void ler_arquivo_secundario() {
     ifstream arquivo("arquivo_indice_secundario.bin", ios::in | ios::binary); // abre o arquivo de índice secundário para leitura
     ofstream output2("output_sec.txt"); // abre o arquivo de texto
@@ -83,9 +83,6 @@ void ler_arquivo_secundario() {
 
             output2 << "\n============ BLOCO " << i << " - INTERNO ============" << endl;
             output2 << "-> Endereço do bloco atual: " << endereco_atual << "\n" << endl;
-
-            // int quant_chaves = MAX;
-            // int quant_enderecos = MAX + 1;
             
             int tipo_bloco;
             int quant_chaves_no_bloco;
@@ -107,7 +104,7 @@ void ler_arquivo_secundario() {
             // Percorre todas as chaves e endereços do bloco
             for(int i = 0; i < quant_chaves_no_bloco; i++) {
 
-                // Se for a primeira chave/endereço do bloco
+                // Se for a primeira chave do bloco
                 if(i == 0) {
 
                     arquivo.read((char*)&endereco, sizeof(int));    // lê o endereço (bloco com valores menores que a chave)
@@ -117,10 +114,10 @@ void ler_arquivo_secundario() {
                     string chave;
                     size_t tamanho_string;
 
-                    arquivo.read((char*)&tamanho_string, sizeof(tamanho_string));   // lê o tamanho da chave
+                    arquivo.read((char*)&tamanho_string, sizeof(tamanho_string));   // lê o tamanho da chave (Título)
                     output2 << "Tamanho da chave: " << tamanho_string << endl;
 
-                    chave.resize(tamanho_string);
+                    chave.resize(tamanho_string);   // Faz o resize da chave para ter "tamanho_string" de tamanho
 
                     arquivo.read((char*)&chave[0], tamanho_string);   // lê a chave
                     arquivo.clear();
@@ -138,7 +135,7 @@ void ler_arquivo_secundario() {
 
                         arquivo.read((char*)&tamanho_string, sizeof(tamanho_string));   // lê o tamanho da chave
 
-                        chave.resize(tamanho_string);
+                        chave.resize(tamanho_string);   // Faz o resize da chave para ter "tamanho_string" de tamanho
 
                         arquivo.read((char*)&chave[0], tamanho_string);   // lê a chave
                         arquivo.clear();
@@ -186,7 +183,9 @@ void ler_arquivo_secundario() {
                 size_t tamanho_string;
 
                 arquivo.read((char*)&tamanho_string, sizeof(tamanho_string));   // lê o tamanho da chave
-                chave.resize(tamanho_string);
+
+                chave.resize(tamanho_string);   // Faz o resize da chave para ter "tamanho_string" de tamanho
+
                 arquivo.read((char*)&chave[0], tamanho_string);   // lê a chave
                 arquivo.clear();
 
@@ -211,11 +210,11 @@ void ler_arquivo_secundario() {
 
 int main(int argc, char* argv[]){
 
-    // ================== LENDO ARQUIVO DE DADOS E CRIANDO VETORES DE ID'S E ENDEREÇOS ==================
+    // ================== LENDO ARQUIVO DE DADOS E CRIANDO VETORES DE TÍTULOS E ENDEREÇOS ==================
 
     cout << "Lendo arquivo de dados ..." << endl;
 
-	ler_arquivo_dados();   // lê o arquivo de dados e armazena os IDs e endereços em vetores
+	ler_arquivo_dados();   // lê o arquivo de dados e armazena os Títulos e endereços em vetores
 
     cout << "Arquivo de dados lido!" << endl;
     cout << "============================================" << endl;
@@ -241,17 +240,20 @@ int main(int argc, char* argv[]){
 
 
 
-    // ================== CONSTRÓI O ARQUIVO DE ÍNDICE ==================
+    // ================== CONSTRÓI O ARQUIVO DE ÍNDICE SECUNDÁRIO ==================
+
+
 
     fstream file("arquivo_indice_secundario.bin", ios::out | ios::binary);    // abre o arquivo de índice secundário para escrita
 
     cout << "\nConstruindo arquivo de índice secundário ..." << endl;
 
-    bpt.alocaArvore_tipo3(bpt.getRoot(), file);
+    bpt.alocaArvore(bpt.getRoot(), file);   // chama a função que vai alocar os nós (blocos) no arquivo de índice
 
-    file.close();   // fecha o arquivo de índice primário
+    file.close();   // fecha o arquivo de índice secundário
 
     cout << "============================================" << endl;
+
 
 
     // ================== FAZ A LEITURA DA ÁRVORE E MOSTRA EM UM ARQUIVO TEXTO ==================
@@ -279,7 +281,7 @@ int main(int argc, char* argv[]){
 
     cout << "\nLendo arquivo de índice secundário ..." << endl;
 
-    ler_arquivo_secundario(); // lê o arquivo de índice secundário e printa no arquivo de texto (output_pri.txt)
+    ler_arquivo_secundario(); // lê o arquivo de índice secundário e printa no arquivo de texto (output_sec.txt)
 
     cout << "Arquivo de índice secundário lido!" << endl; 
     cout << "Abra o arquivo output_sec.txt para verificar a leitura! :D\n" << endl;

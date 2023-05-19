@@ -56,9 +56,7 @@ class BPTree{
 		int contaBlocosInternos(Node*);
 		Node* getRoot();
 		int buscaBlocoBinario(Node*);
-		void alocaArvore_tipo1(Node*, fstream&);
-		void alocaArvore_tipo2(Node*, string, fstream&);
-		void alocaArvore_tipo3(Node*, fstream&);
+		void alocaArvore(Node*, fstream&);
 };
 
 // MÉTODOS CONSTRUTOR DO NÓ
@@ -86,7 +84,7 @@ void BPTree::insert(string x, int block_address){
 		root->is_leaf = true; // Define nó raiz como folha
 		root->size = 1; // Contador de chaves no nó raiz
 
-		cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 1)\n"; 
+		cout << "\nChave \"" << x << "\" inserida com sucesso.\n"; 
 	} 
 	// Se árvore não estiver vazia, procuramos onde inserir chave
 	else {
@@ -129,7 +127,7 @@ void BPTree::insert(string x, int block_address){
 			cursor->ptr[cursor->size] = cursor->ptr[cursor->size-1]; // Atualiza ponteiro do cursor
 			cursor->ptr[cursor->size-1] = NULL; // Atualiza ponteiro do cursor
 
-			cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 2)\n"; 
+			cout << "\nChave \"" << x << "\" inserida com sucesso.\n"; 
 		} 
 		// Se o nó folha estiver cheio
 		else {
@@ -182,15 +180,15 @@ void BPTree::insert(string x, int block_address){
 				newRoot->size = 1;
 				root = newRoot;
 
-				cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 3)\n"; 
+				cout << "\nChave \"" << x << "\" inserida com sucesso.\n"; 
 
 			} 
 			// Se cursor não for raiz
 			else {
 
-				cout << "\nChave " << x << " inserida com sucesso. (tipo de inserção: 4 ######)\n";
+				cout << "\nChave \"" << x << "\" inserida com sucesso.\n";
 				insertInternal(newLeaf->key[0],parent,newLeaf,newLeaf->address[0]);	// Insere chave no nó interno
-				cout << "SAIUUUU" << endl;
+
 			}
 			
 		}
@@ -204,8 +202,6 @@ void BPTree::insertInternal(string x, Node* cursor, Node* child, int block_addre
 	// Se o número de chaves atualmente no nó for menor que o MAX (número máximo de chaves)
 	if(cursor->size < MAX){
 		int i = 0;
-
-		cout << "\nLUFFYYYYYYYY "<< endl;
 
 		while(x.compare(cursor->key[i]) > 0 && i < cursor->size) i++;	// Encontra posição para inserir chave
 
@@ -232,20 +228,9 @@ void BPTree::insertInternal(string x, Node* cursor, Node* child, int block_addre
 		int virtualAddress[MAX+1];	// Cria vetor virtual de endereços
 		Node* virtualPtr[MAX+2];	// Cria vetor virtual de ponteiros
 
-		int tamanho_vet_virtual = 0;
-
 		for(int i = 0; i < MAX; i++){	// Copia chaves do cursor para vetor virtual
-			cout << "\n\nPASSANDO CHAVEZINHAR " << cursor->key[i] << endl;
 			virtualKey[i].assign(cursor->key[i]);
-			cout << "COPIANDO CHAVEZINHAR " << virtualKey[i] << endl;
 			virtualAddress[i] = cursor->address[i];
-
-			tamanho_vet_virtual++;
-		}
-
-		cout << "TAMANHO DO VETOR VIRTUAL: " << tamanho_vet_virtual << endl;
-		for(int i = 0; i < tamanho_vet_virtual+1; i++){	
-			cout << "CHAVE: " << virtualKey[i] << endl;
 		}
 
 		for(int i = 0; i < MAX+1; i++){	// Copia ponteiros do cursor para vetor virtual
@@ -256,30 +241,16 @@ void BPTree::insertInternal(string x, Node* cursor, Node* child, int block_addre
 
 		while(x.compare(virtualKey[i]) > 0 && i < MAX) i++;	// Encontra posição para inserir chave
 
-		cout << "CHAVE A SER INSERIDA: " << x << endl;	
-		cout << "POSICAO PARA INSERIR CHAVE: " << i << endl;	
-		
-		cout << "\n\nUEPAAAAAAAAAAAAA \n\n" << endl;
-
-		for(int j = MAX;j > i; j--){	// MUDEI AQUIIIIIIIIIIIIIII (antes = MAX+1 | depois = MAX)
+		for(int j = MAX;j > i; j--){	// Desloca chaves para direita
 			virtualKey[j].assign(virtualKey[j-1]);
 			virtualAddress[j] = virtualAddress[j-1];
 		}
 
-		cout << "\n\nPASSOUUUUU \n\n" << endl;
-
 		virtualKey[i] = x;	// Insere chave no vetor virtual
-
-		cout << "\n\nPRINTANDO VETOR VIRTUAL \n\n" << endl;
-		for(int i = 0; i < tamanho_vet_virtual+1; i++){	
-			cout << "CHAVE: " << virtualKey[i] << endl;
-		}
 
 		for(int j = MAX+1;j > i+1; j--){	// Desloca ponteiros para direita	// MUDEI AQUIIIIIIIIIIIIIII (antes = MAX+2 | depois = MAX+1)
 			virtualPtr[j] = virtualPtr[j-1];
 		}
-
-		cout << "\n\nZOROOOOOOOO \n\n" << endl;
 
 		virtualPtr[i+1] = child;			// Insere ponteiro no vetor virtual
 		newInternal->is_leaf = false;		// Define nó interno como não folha
@@ -287,29 +258,17 @@ void BPTree::insertInternal(string x, Node* cursor, Node* child, int block_addre
 		newInternal->size = MAX-(MAX+1)/2;	// Atualiza número de chaves no novo nó interno
 
 		for(i = 0, j = cursor->size+1; i < newInternal->size; i++, j++){	// Copia chaves do vetor virtual para novo nó interno
-			cout << "CHAVE PASSADA: " << virtualKey[j] << endl;
 			newInternal->key[i].assign(virtualKey[j]);
 			newInternal->address[i] = virtualAddress[j];
-		}
-		cout << "Tamanho do novo nó interno: " << newInternal->size << endl;
-		cout << "\n\nPRINTANDO NOVO NÓ INTERNO \n\n" << endl;
-		for(int i = 0; i < newInternal->size; i++){	
-			cout << "CHAVE: " << newInternal->key[i] << endl;
 		}
 
 		for(i = 0, j = cursor->size+1; i < newInternal->size+1; i++, j++){	// Copia ponteiros do vetor virtual para novo nó interno
 			newInternal->ptr[i] = virtualPtr[j];
 		}
 
-		cout << "\n\nANALISE QUANTICA \n\n" << endl;
-
 		// Se cursor for raiz
 		if(cursor == root){
-			cout << "TESTE IF" << endl;
 			Node* newRoot = new Node;	// Aloca nova raiz
-
-			cout << "PRINTA CHAVE: " << cursor->key[cursor->size] << endl;
-			cout << "PRINTA ENDER: " << cursor->address[cursor->size] << endl;
 
 			newRoot->key[0].assign(cursor->key[cursor->size]);			// Copia chave do cursor para nova raiz
 			newRoot->address[0] = cursor->address[cursor->size];	// Copia endereço do cursor para nova raiz
@@ -319,11 +278,11 @@ void BPTree::insertInternal(string x, Node* cursor, Node* child, int block_addre
 			newRoot->size = 1;										// Define número de chaves na nova raiz
 			root = newRoot;											// Define nova raiz como raiz da árvore
 			cout << newRoot->key[0] << endl;
-			cout << "TERMINOU IF" << endl;
+
 		} 
 		// Se cursor não for raiz
 		else {
-			cout << "TESTE ELSE" << endl;
+
 			// Chama função recursivamente para inserir chave no nó pai
 			insertInternal(cursor->key[cursor->size], findParent(root,cursor), newInternal, cursor->address[cursor->size]);	
 
@@ -494,87 +453,8 @@ int BPTree::buscaBlocoBinario(Node* cursor) {
 	return endereco;
 }
 
-// BPTREE: ALOCA ÁRVORE TIPO 1 - esse tipo de inserção só acontece 1 vez, quando a primeira chave é inserida na árvore
-void BPTree::alocaArvore_tipo1(Node* cursor, fstream& file){
-
-	if(cursor!=NULL){
-
-		file.seekp(0);	// Vai para o início do arquivo
-		
-		int tipo_bloco = 1;	// Tipo do bloco (0 = interno, 1 = folha)
-
-		file.write((char*)&tipo_bloco, sizeof(int));		// Escreve o tipo do bloco
-		file.write((char*)&cursor->size, sizeof(int));		// Escreve o tamanho do nó
-
-		size_t  tamanho_string = cursor->key[0].size();
-		file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve se o nó é folha ou não
-
-		file.write((char*)&cursor->key[0], tamanho_string);		// Escreve a chave
-		file.write((char*)&cursor->address, sizeof(int));	// Escreve o endereço do arquivo de dados	
-
-	}
-
-} // end
-
-// BPTREE: ALOCA ÁRVORE TIPO 2 - esse tipo de inserção acontece quando uma chave vai ser inserida em um bloco normalmente, sem ocorrer split
-void BPTree::alocaArvore_tipo2(Node* cursor, string chave, fstream& file){
-
-	if(cursor!=NULL){
-		
-		// Se o cursor for a raiz (neste caso, como há inserção diretamente na raiz, ela é um bloco folha)
-		if(cursor == getRoot()) {
-
-			file.seekp(0);	// Posiciona o cursor de escrita no byte 0 (início do arquivo e onde sempre será a raiz)
-
-			// Grava a chave e o endereço do arquivo de dados na raiz
-			for(int i = 0; i < cursor->size; i++){
-
-				// Se for a primeira chave a ser inserida na raiz
-				if(i == 0) {
-					int tipo_bloco = 1;								// Tipo do bloco (0 = interno, 1 = folha)
-
-					file.write((char*)&tipo_bloco, sizeof(int));	// Escreve o tipo do bloco
-					file.write((char*)&cursor->size, sizeof(int));	// Escreve o tamanho do nó
-				}
-
-				size_t  tamanho_string = cursor->key[i].size();
-				file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve se o nó é folha ou não
-				
-				file.write((char*)&cursor->key[i][0], tamanho_string);		// Escreve a chave
-				file.write((char*)&cursor->address[i], sizeof(int));	// Escreve o endereço do arquivo de dados
-			}
-
-		} 
-		// Se o cursor NÃO for a raiz
-		else {
-			int enderecoBloco = buscaBlocoBinario(cursor);	// Busca o bloco onde a chave será inserida
-
-			file.seekp(enderecoBloco); // Posiciona o cursor de escrita no bloco onde a chave será inserida
-
-			// Grava a chave e o endereço do arquivo de dados no bloco folha
-			for(int i = 0; i < cursor->size; i++){
-
-				// Se for a primeira chave a ser inserida no bloco
-				if(i == 0) {
-					int tipo_bloco = 1;								// Tipo do bloco (0 = interno, 1 = folha)
-
-					file.write((char*)&tipo_bloco, sizeof(int));	// Escreve o tipo do bloco
-					file.write((char*)&cursor->size, sizeof(int));	// Escreve o tamanho do nó
-				}
-
-				size_t  tamanho_string = cursor->key[i].size();
-				file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve se o nó é folha ou não
-				
-				file.write((char*)&cursor->key[i][0], tamanho_string);		// Escreve a chave
-				file.write((char*)&cursor->address[i], sizeof(int));	// Escreve o endereço do arquivo de dados
-			}
-
-		}
-	}
-} // end
-
-// BPTREE: ALOCA ÁRVORE TIPO 3 - esse tipo de inserção acontece quando uma chave vai ser inserida em um bloco que já está cheio, ocorrendo um split, que pode ou não interferir na raiz
-void BPTree::alocaArvore_tipo3(Node* root, fstream& file) {
+// BPTREE: ALOCA ÁRVORE - após a árvore ser feita, escreve ela e todos os nós (blocos) no arquivo de índice secundário
+void BPTree::alocaArvore(Node* root, fstream& file) {
     queue<Node*> nodeQueue;	// Fila de nós
     nodeQueue.push(root);	// Adiciona a raiz na fila
 
@@ -603,8 +483,8 @@ void BPTree::alocaArvore_tipo3(Node* root, fstream& file) {
 					file.write((char*)&cursor->size, sizeof(int));	// Escreve o tamanho do nó
 				}
 
-                size_t  tamanho_string = cursor->key[i].size();
-				file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve se o nó é folha ou não
+                size_t  tamanho_string = cursor->key[i].size();		// Calcula e guarda o tamanho da string
+				file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve o tamanho da string
 				
 				file.write((char*)&cursor->key[i][0], tamanho_string);		// Escreve a chave
                 file.write((char*)&cursor->address[i], sizeof(int));	// Escreve o endereço do arquivo de dados
@@ -628,8 +508,8 @@ void BPTree::alocaArvore_tipo3(Node* root, fstream& file) {
 					endereco_primario = cont_endereco * BLOCO_SIZE;		// Calcula o endereço do arquivo de índice que será gravado
                     file.write((char*)&endereco_primario, sizeof(int));	// Grava o endereço do arquivo de índice do bloco que guarda valores menores que a chave
                     
-					size_t  tamanho_string = cursor->key[i].size();
-					file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve se o nó é folha ou não
+					size_t  tamanho_string = cursor->key[i].size();				// Calcula e guarda o tamanho da string
+					file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve o tamanho da string
 					file.write((char*)&cursor->key[i][0], tamanho_string);		// Escreve a chave
 
 					cont_endereco++;									// Incrementa o contador de endereço
@@ -640,9 +520,10 @@ void BPTree::alocaArvore_tipo3(Node* root, fstream& file) {
 
 					cont_endereco++;									// Incrementa o contador de endereço
 					endereco_primario = cont_endereco * BLOCO_SIZE;		// Calcula o endereço do arquivo de índice que será gravado
-                    size_t  tamanho_string = cursor->key[i].size();
 
-					file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve se o nó é folha ou não
+                    size_t  tamanho_string = cursor->key[i].size();		// Calcula e guarda o tamanho da string
+					file.write((char*)&tamanho_string, sizeof(tamanho_string));	// Escreve o tamanho da string
+					
 					file.write((char*)&cursor->key[i][0], tamanho_string);		// Escreve a chave
                     file.write((char*)&endereco_primario, sizeof(int));	// Grava o endereço do arquivo de índice do bloco que guarda valores maiores que a chave
 
