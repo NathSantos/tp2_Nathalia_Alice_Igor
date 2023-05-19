@@ -25,7 +25,7 @@ Repositório base para o 2o Trabalho de Banco de Dados da Graduação em Ciênci
 
 - ```upload_sec.cpp``` -> Programa que faz a leitura do arquivo de dados e realiza a inserção dos Títulos na árvore B+ por meio de funções declaradas no ```bplustree_sec.h```.
 - ```bplustree_sec.h``` -> Programa que possui todas as funções relacionadas à árvore B+ e à construção do arquivo de índice secundário.
-- ```structs_se.h``` -> Programa contendo structs e constantes mais importantes.
+- ```structs_sec.h``` -> Programa contendo structs e constantes mais importantes.
 - ```seek2.cpp``` -> Programa que faz a busca diretamente no arquivo de índice secundário por um registro com o Título informado.
 
 **OBS:** Na documentação ```TP2_documentação.pdf``` explicamos melhor sobre cada programa e arquivo citado acima, assim como outras observações importantes sobre o trabalho.
