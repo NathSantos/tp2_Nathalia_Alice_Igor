@@ -60,7 +60,7 @@ cd src
 
 Por fim, liste o conteúdo do diretório com o comando ```ls``` para se certificar de que está na pasta certa. Todos os programas, assim como o arquivo de entrada, devem aparecer. O resultado será algo parecido com:
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/a0970150-b3d0-402c-bc35-8c2445382e2a)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/20fe46cc-53b4-4076-ab70-2f994aa68a91)
 
 ----------------------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ Em seguida, vamos executá-lo passando o arquivo de entrada ```artigo.csv``` com
 
 Durante a execução, serão exibidos logs no terminal que indicarão quando o código terminar de ser executado, como mostra a imagem a seguir. Após a execução, teremos nosso arquivo de dados pronto no arquivo binário ```arquivo_dados.bin``` e um arquivo de texto ```output_hash.txt``` que lê o arquivo binário e passa para .txt apenas para se ter uma visualização de como ficou estruturado o arquivo de dados.
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/1e7d581a-f572-4815-a1ae-efa849fcddb9)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/70d73741-1bb4-43b2-9e39-dc30b8d32d7c)
 
 ----------------------------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ E executá-lo logo em seguida. Dessa vez não vamos passar nada como argumento p
 
 Assim como na geração do arquivo de dados, serão exibidos logs no terminal para indicar quando ainda está sendo feita a inserção dos ID's na árvore B+ e, consequentemente, a geração do arquivo de índice e quando o código terminar sua execução. Após a execução, teremos nosso arquivo de índice primário pronto no arquivo binário ```arquivo_indice_primario.bin``` e um arquivo de texto ```output_pri.txt``` que mostra o arquivo de índice primário.
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/d669dd29-da30-4455-bd19-3705844e1ee6)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/94dbbacf-a136-4c37-8cba-926f30a3e351)
 
 ----------------------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ E executá-lo logo em seguida. Não vamos passar nada como argumento pois o arqu
 
 Da mesma forma, haverá logs no terminal indicando a situação do programa. Após a execução, teremos nosso arquivo de índice secundário pronto no arquivo binário ```arquivo_indice_secundario.bin``` e um arquivo de texto ```output_sec.txt``` que mostra o arquivo de índice secundário.
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/1a69a9e8-4579-4522-9554-dbacb7d144f3)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/272327b2-439e-4073-83ea-fa0cce0716c7)
 
 ----------------------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@ E, em seguida, já podemos buscar diretamente no arquivo de dados por um registr
 
 Se existir, os campos do registro serão retornados, assim como a quantidade de blocos lidos para encontrá-lo e a quantidade total de blocos do arquivo de dados:
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/71c6fc91-4261-40df-aa1f-762afbf6ef36)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/51ab4b7a-ca2d-4e05-b7e3-5c9b0bfbdf42)
 
 ----------------------------------------------------------------------------------------
 
@@ -164,7 +164,7 @@ E, em seguida, já podemos buscar através do arquivo de índice primário por u
 
 Se existir, os campos do registro serão retornados, assim como a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice primário:
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/3c72fd31-ed1e-45eb-8ec8-cc33a172316e)
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/24bb29f0-4177-4b60-a871-e304dd7be478)
 
 ----------------------------------------------------------------------------------------
 
@@ -184,7 +184,5 @@ E vamos buscar através do arquivo de índice secundário por um registro com o 
 
 Se existir, os campos do registro serão retornados, assim como a quantidade de blocos lidos para encontrá-lo no arquivo de índice e a quantidade total de blocos do arquivo de índice secundário:
 
-![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/8dfda94c-a37b-4857-b943-a917d71ba169)
-
-
+![image](https://github.com/NathSantos/tp2_Nathalia_Alice_Igor/assets/63311872/6c3d43b0-e9e4-447b-bb99-6b75f3d0a0c5)
 
